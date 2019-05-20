@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Team 2992's Build Sign In</title>
+        <meta charset = "utf-8" />
+        <style>
+            body{
+                font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+                background-color: #516EFF;/*000080*/
+                color: #fff;
+            }
+            /* navigation menu */
+            nav {
+                background:#516EFF;
+                margin: 0 auto;
+                margin-bottom: 20px;
+                display: flex;
+                padding: 10px;
+                border-radius: 25px;
+            }
+            nav header {
+                font-size: 2.3em;
+                display: flex;
+                align-items: center;
+                color: #fff;
+                flex: 1;
+            }
+            nav ul {
+                align-items: center;
+                list-style-image: none;
+            }
+            nav li {
+                display:inline-block;
+                padding: 0 10px;
+            }
+            nav a {
+                text-decoration:none;
+                color: #fff;
+            }
+
+            #submit-btn{
+                background-color:#A0E4FF;
+                color: #064964;
+                border-radius: 25px;
+            }
+
+            .to-hide{
+                visibility: hidden;
+            }
+    
+        </style>
+    </head>
+    <body>
+        <nav>
+            <header>New User</header>
+            <ul>
+                <li> <a href="admin.html">Admin Sign In</a></li>
+                <li> <a href="signin.html">Regular Sign In</a></li>
+                <li> <a href = newUser.html>New User?</a></li>
+            </ul>
+        </nav>
+        <div>
+            <h2>With a new account, you will be able to sign in and out and record your hours for build</h2>
+            <h3>To create an account - please enter the following information</h3>
+            <p>
+                <label>First Name</label>
+                <input type="text" id="new-user-first-name"/>
+            </p>
+            <p>
+                <label>Middle Initial</label>
+                <input type="text" id="new-user-mid-init"/>
+            </p>
+            <p>
+                <label>Last Name</label>
+                <input type="text" id="new-user-last-name"/>
+            </p>
+            <p>
+                <label>Are you an Officer?</label>
+                <input type="checkbox" id="is-officer"/>
+
+                <label class="to-hide">Create a Password</label>
+                <input type="password" class="to-hide"/>
+
+                <label class="to-hide">Confirm Password</label>
+                <input type="password" class="to-hide" id="admin-new-pass"/>
+
+            </p>
+                <button type="submit" id="submit-btn">Create Account</button>
+            </p>
+        </div>
+    </body>
+</html>

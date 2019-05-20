@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Team 2992's Build Sign In</title>
+        <meta charset="utf-8"/>
+        <style>
+            body{
+                font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+                background-color: #516EFF;/*000080*/
+                color: #fff;
+            }
+            /* navigation menu */
+            nav {
+                background:#516EFF;
+                margin: 0 auto;
+                margin-bottom: 20px;
+                display: flex;
+                padding: 10px;
+                border-radius: 25px;
+            }
+            nav header {
+                font-size: 2.3em;
+                display: flex;
+                align-items: center;
+                color: #fff;
+                flex: 1;
+            }
+            nav ul {
+                align-items: center;
+                list-style-image: none;
+            }
+            nav li {
+                display:inline-block;
+                padding: 0 10px;
+            }
+            nav a {
+                text-decoration:none;
+                color: #fff;
+            }
+
+            .btns{
+                background-color:#A0E4FF;
+                color: #064964;
+                border-radius: 25px;
+            }
+    
+        </style>
+    </head>
+    <body>
+        <nav>
+            <header>Team 2992's Build Sign In</header>
+            <ul>
+                <li> <a href = admin.html>Admin Sign In</a></li>
+                <li> <a href = signIn.html>Regular Sign In</a></li>
+                <li> <a href = newUser.html>New User?</a></li>
+            </ul>
+        </nav>
+        <main>
+            <div class = "instructions">
+                <h2>To sign in, please enter your name into the space provided and press the Clock In button</h3>
+                <h4>Note: If you do not clock out within 24 hours, you will be automatically clocked out 
+                    ONE hour from your previous clock in
+                </h2>
+            </div>
+            <div class = "regularSignIn">
+                <p>
+                    <label>Name</label>
+                    <input type="text" id="regularName" />
+                    <button type="button" class="btns">Clock In</button>
+                    <button type="button" class="btns">Clock Out</button>
+                </p>
+            </div>
+        </main>
+    </body>
+</html>
+
