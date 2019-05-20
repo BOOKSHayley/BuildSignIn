@@ -2,16 +2,16 @@
 <html>
     <head>
         <title>Team 2992's Build Sign In</title>
-        <meta charset = "utf-8"/>
+        <meta charset="utf-8"/>
         <style>
-          body{
+            body{
                 font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
                 background-color: #516EFF;/*000080*/
                 color: #fff;
             }
             /* navigation menu */
             nav {
-                background:#516EFF;
+                background-color:#516EFF;
                 margin: 0 auto;
                 margin-bottom: 20px;
                 display: flex;
@@ -37,44 +37,28 @@
                 text-decoration:none;
                 color: #fff;
             }
-        
-            #admin-enter{
-                background-color:#A0E4FF;
-                color: #064964;
-                border-radius: 25px;
+
+            #officer-abilities a{
+                color:#fff;
             }
         </style>
     </head>
     <body>
         <nav>
-            <header>Team 2992's Admin Sign In</header>
+            <header>Admin Page</header>
             <ul>
                 <li> <a href="admin.html">Admin Sign In</a></li>
                 <li> <a href="signin.html">Regular Sign In</a></li>
-                <li> <a href = newUser.html>New User?</a></li>
+                <li> <a href = "newUser.html">New User?</a></li>
             </ul>
         </nav>
-        <div class = "abilities">
-            <h3>Please sign in with your name and password in the provided space</h2>
-            <h3>What can you do as an administrator?</h3>
+        <div id="officer-abilities">
+            <h2>What do you need to do?</h2>
             <ul>
-                <li>Clock In/ Clock Out</li>
-                <li>Look at everyone's build hours</li>
-                <li>Fix other's build hours - with the acceptance of another administrator</li>
+                <li> <a href= signIn.html>Clock In/Clock Out</a></li>
+                <li>View build hours</li>
+                <li>Create a new Officer</li>
             </ul>
-        </div>
-        <div class = "adminSignIn">
-            <p>
-                <label>Name</label>
-                <input type = "text" id = "adminName"/>
-            </p>
-            <p>
-                <label>Password</label>
-                <input type="password" id="adminPass" />
-            </p>
-            <p>
-                <button type="button" id="admin-enter">Enter</button>
-            </p>
         </div>
     </body>
 </html>

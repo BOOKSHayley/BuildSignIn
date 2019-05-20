@@ -43,10 +43,6 @@
                 color: #064964;
                 border-radius: 25px;
             }
-
-            .to-hide{
-                visibility: hidden;
-            }
     
         </style>
     </head>
@@ -79,12 +75,12 @@
                 <input type="checkbox" id="is-officer"/>
 
                 <label class="to-hide">Create a Password</label>
-                <input type="password" class="to-hide"/>
+                <input type="password"/>
 
-                <label class="to-hide">Confirm Password</label>
-                <input type="password" class="to-hide" id="admin-new-pass"/>
-
+                <label>Confirm Password</label>
+                <input type="password" id="admin-new-pass"/>
             </p>
+            <p>
                 <button type="submit" id="submit-btn">Create Account</button>
             </p>
         </div>
