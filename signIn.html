@@ -45,6 +45,35 @@
             }
     
         </style>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        //<script lang="javascript" src="dist/xlsx.full.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                let mysql = require('mysql');
+
+                let con = mysql.createConnection({
+                    host: "localhost",
+                    user: "yourusername",
+                    password: "yourpassword"
+                });
+
+                con.connect(function(err) {
+                    if (err) throw err;
+                    console.log("Connected!");
+                });
+                
+                $("#in-btn").click(function(){
+                    alert("clocked in!");
+                    
+                });
+
+                $("#out-btn").click(function(){
+                    alert("clocked out!");
+                });
+            });
+        </script>
+
     </head>
     <body>
         <nav>
@@ -67,8 +96,8 @@
                 <p>
                     <label>Name</label>
                     <input type="text" id="regularName" />
-                    <button type="button" class="btns">Clock In</button>
-                    <button type="button" class="btns">Clock Out</button>
+                    <button type="button" class="btns" id="in-btn">Clock In</button>
+                    <button type="button" class="btns" id="out-btn">Clock Out</button>
                 </p>
             </div>
         </main>
