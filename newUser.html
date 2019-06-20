@@ -48,6 +48,64 @@
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <!-- <script lang="javascript" src="dist/xlsx.full.min.js"></script> -->
+        <script>
+            $(document).ready(function(){
+                let firstName;
+                let lastName;
+                let midInit;
+                let number = 0;
+                let everyone = [];
+
+                $("#submit-btn").click(function (){
+                    if(localStorage.getItem("number")){
+                        number = retrieveLocalStorage("number");
+                    }
+
+                    firstName = document.getElementById("new-user-first-name").value;
+                    lastName = document.getElementById("new-user-last-name").value;
+                    midInit = document.getElementById("new-user-mid-init").value;
+
+                    makeNewUser(number, firstName, midInit, lastName);
+                    number++;
+                    //console.log(number);
+
+                    //this saves the array in local storage
+                    //array should still be there after refresh
+                    updateLocalStorage("everyoneArray", everyone);
+                    updateLocalStorage("number", number);
+
+                    alert("Congratulations! You have successfully created an account. Welcome to Team 2992!")
+                });
+
+                function makeNewUser(num, fN, mI, lN){
+                    window["obj"+num] = {
+                        number: num,
+                        firstName: fN,
+                        midInit: mI,
+                        lastName: lN,
+                        dates: [],
+                        clockIns: [],
+                        clockOuts: [],
+                        totals: []
+                    }
+                    everyone.push(window["obj"+num]);
+                    //console.log(everyone);
+                }
+
+                function updateLocalStorage(key, val){
+                    //if key is defined - remove that item from local storage (so not saving multiple copies)
+                    if(key){
+                        localStorage.removeItem(key);
+                    }
+                    localStorage.setItem(key, JSON.stringify(val));
+                }
+
+                function retrieveLocalStorage(key){
+                    return JSON.parse(localStorage.getItem(key));
+                }
+        
+            });
+        </script>
 
     </head>
     <body>

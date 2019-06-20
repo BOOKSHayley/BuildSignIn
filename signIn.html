@@ -50,30 +50,88 @@
         <!-- <script lang="javascript" src="dist/xlsx.full.min.js"></script> -->
         <script>
             $(document).ready(function(){
-
-            /*
-                let mysql = require('mysql');
-
-                let con = mysql.createConnection({
-                    host: "localhost",
-                    user: "root",
-                    password: "PRIDEandPREDJUDICE;)"
-                });
-
-                con.connect(function(err) {
-                    if (err) throw err;
-                    console.log("Connected!");
-                });
-            */  
+                let everyone = retrieveLocalStorage("everyoneArray");
+                let name = "";
+                let date = "";
+                let time = 0;
+                let total = 0;
+                let allHours = 0;
+                let personObj;
 
                 $("#in-btn").click(function(){
-                    alert("clocked in!");
+                    onBtnClick("in");
+                    
                     
                 });
 
                 $("#out-btn").click(function(){
-                    alert("clocked out!");
+                    onBtnClick("out");
+                    
                 });
+
+                function onBtnClick(val){
+                    alertMessage = "";
+                    name = retrieveVal("regular-name");
+                    date = retrieveVal("date");
+                    time = Date.now()/1000/60/60; //time is milliseconds so need to convert to hours
+
+                    personObj = findPerson(everyone, name);
+
+                    //may not find the person therefore null
+                    if(personObj){      
+                        if(val === "in"){
+                            personObj.dates.push(date);
+                            //if you forgot to clock in previously
+                            if(personObj.clockIns.length !== personObj.clockOuts.length){
+                                total = 1;
+                                personObj.totals.push(total);
+                                alertMessage += " We are missing the previous clock out. You have been awarded one hour of build time from the previous clock-in. ";
+                            }
+                            personObj.clockIns.push(time);
+                            alertMessage += " Hello, " + name +", you have successfully clocked in today!";
+                        }else if(val === "out"){
+                            total = (time - personObj.clockIns[personObj.clockIns.length-1]).toFixed(2);
+
+                            //if you tried to clock out after a long time
+                            if(total >= 15.00){
+                                total = 1;
+                                alertMessage += " You're prior clock in was more than 15 hours ago. You have been awarded one hour of build time from that clock-in. Please clock in to log more hours. ";
+                            }
+                            personObj.clockOuts.push(time);
+                            personObj.totals.push(total);
+                            alertMessage += "Hello, "+name+", you have successfully logged "+total+" hours today!";
+                        } 
+                    }
+                    updateLocalStorage("everyoneArray", everyone);
+                    alert(alertMessage);
+                }
+
+                function findPerson(arr, name){//finds student's object
+                    for(let i=0; i<arr.length; i++){
+                        if(name.toLowerCase() === arr[i].firstName.toLowerCase()){
+                            return arr[i];
+                        }
+                    }
+                    alertMessage = "We couldn't find you name. Please check for spelling errors or create a new user, thank you";
+                    return null;
+                }
+
+                function retrieveVal(id){//get the values from input bars
+                    return document.getElementById(id).value;
+                }
+
+                function retrieveLocalStorage(key){//get array from the local storage
+                    return JSON.parse(localStorage.getItem(key));
+                }
+
+                function updateLocalStorage(key, val){
+                    //if key is defined - remove that item from local storage (so not saving multiple copies)
+                    if(key){
+                        localStorage.removeItem(key);
+                    }
+                    localStorage.setItem(key, JSON.stringify(val));
+                }
+
             });
         </script>
 
@@ -89,8 +147,9 @@
         </nav>
         <main>
             <div class = "instructions">
-                <h2>To sign in, please enter your name into the space provided and press the Clock In button</h2>
-                <h2>To sign out, please enter your name into the space provided and press the Clock Out button</h2>
+                <h2>To sign in, please enter your first name and date into the spaces provided and press the Clock In button</h2>
+                <h2>To sign out, please enter your first name into the space provided and press the Clock Out button</h2>
+                <h4>You only have to put the date when clocking IN</h4>
                 <h4>Note: If you do not clock out within 15 hours, you will be automatically clocked out 
                     ONE hour from your previous clock in
                 </h4>
@@ -98,7 +157,13 @@
             <div class = "regularSignIn">
                 <p>
                     <label>Name</label>
-                    <input type="text" id="regularName" />
+                    <input type="text" id="regular-name" />
+                </p>
+                <p>
+                    <label>Date</label>
+                    <input type="text" id="date" />
+                </p>
+                <p>
                     <button type="button" class="btns" id="in-btn">Clock In</button>
                     <button type="button" class="btns" id="out-btn">Clock Out</button>
                 </p>
