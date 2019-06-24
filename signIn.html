@@ -46,12 +46,13 @@
     
         </style>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <!-- <script lang="javascript" src="dist/xlsx.full.min.js"></script> -->
+        <script src="jquery-3.4.1.js"></script>
         <script>
             $(document).ready(function(){
                 let everyone = retrieveLocalStorage("everyoneArray");
                 let name = "";
+                let lastName = "";
                 let date = "";
                 let time = 0;
                 let total = 0;
@@ -69,13 +70,15 @@
                     
                 });
 
+                //what to do when buttons are clicked
                 function onBtnClick(val){
                     alertMessage = "";
                     name = retrieveVal("regular-name");
+                    lastName = retrieveVal("opt-last-name");
                     date = retrieveVal("date");
                     time = Date.now()/1000/60/60; //time is milliseconds so need to convert to hours
 
-                    personObj = findPerson(everyone, name);
+                    personObj = findPerson(everyone, name, lastName);
 
                     //may not find the person therefore null
                     if(personObj){      
@@ -88,7 +91,7 @@
                                 alertMessage += " We are missing the previous clock out. You have been awarded one hour of build time from the previous clock-in. ";
                             }
                             personObj.clockIns.push(time);
-                            alertMessage += " Hello, " + name +", you have successfully clocked in today!";
+                            alertMessage += " Hello, " + name + " "+lastName+", you have successfully clocked in today!";
                         }else if(val === "out"){
                             total = (time - personObj.clockIns[personObj.clockIns.length-1]).toFixed(2);
 
@@ -99,34 +102,74 @@
                             }
                             personObj.clockOuts.push(time);
                             personObj.totals.push(total);
-                            alertMessage += "Hello, "+name+", you have successfully logged "+total+" hours today!";
+                            personObj.allHours += total;
+                            alertMessage += " Hello, "+name+", you have successfully logged "+total+" hours today for a total of "+allHours+" hours!";
                         } 
                     }
                     updateLocalStorage("everyoneArray", everyone);
                     alert(alertMessage);
                 }
 
-                function findPerson(arr, name){//finds student's object
+                //functions to find/check for the student's information
+                function findPerson(arr, name, lN){//finds student's object
+                    if(arr){
+                        if(lN){//if last name is provided, also check for last names
+                            for(let i=0; i<arr.length; i++){
+                                if(isEqualTo(name, arr[i].firstName) && isEqualTo(lN, arr[i].lastName)){
+                                    return arr[i];
+                                }
+                            }
+                        } else if(!lN && checkForDoubles(arr, name)){//no last name included and more than one person w/ same name
+                            alert("There are more than one person with the name "+ name+" so please enter your last name. Thank you");
+                            return null;
+                        }else{//no last name given and no doubles therefore can just look for the person
+                            for(let i=0; i<arr.length; i++){
+                                if(isEqualTo(name, arr[i].firstName)){
+                                    return arr[i];
+                                }
+                            }
+                        }
+                        alertMessage = "We couldn't find your name. Please check for spelling errors or create a new user, thank you";
+                    }else{
+                        console.log("error: array not defined");
+                    }                    
+                    return null;
+                }
+
+                function checkForDoubles(arr, name){
+                    let counter = 0;
                     for(let i=0; i<arr.length; i++){
-                        if(name.toLowerCase() === arr[i].firstName.toLowerCase()){
-                            return arr[i];
+                        if(isEqualTo(name, arr[i].firstName)){
+                            counter++;
                         }
                     }
-                    alertMessage = "We couldn't find you name. Please check for spelling errors or create a new user, thank you";
-                    return null;
+                    if(counter > 1){ //if more than one person w/ same name - return true
+                        return true;
+                    } else{//if not thats fine
+                        return false;
+                    }
+                }
+
+                function isEqualTo(val1, val2){
+                    if(val1.toLowerCase() === val2.toLowerCase()){
+                        return true;
+                    } else{
+                        return false;
+                    }
                 }
 
                 function retrieveVal(id){//get the values from input bars
                     return document.getElementById(id).value;
                 }
 
+                //functions to handle local storage
                 function retrieveLocalStorage(key){//get array from the local storage
                     return JSON.parse(localStorage.getItem(key));
                 }
 
                 function updateLocalStorage(key, val){
-                    //if key is defined - remove that item from local storage (so not saving multiple copies)
-                    if(key){
+                    //if local storage has the key - remove that item from local storage (so not saving multiple copies)
+                    if(localStorage.getItem(key)){
                         localStorage.removeItem(key);
                     }
                     localStorage.setItem(key, JSON.stringify(val));
@@ -158,6 +201,8 @@
                 <p>
                     <label>Name</label>
                     <input type="text" id="regular-name" />
+                    <label>Last Name (Optional)</label>
+                    <input type = "text" id = "opt-last-name"/>
                 </p>
                 <p>
                     <label>Date</label>

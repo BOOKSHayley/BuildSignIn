@@ -45,8 +45,55 @@
             }
         </style>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="jquery-3.4.1.js"></script>
         <!-- <script lang="javascript" src="dist/xlsx.full.min.js"></script> -->
+        <script>
+            $(document).ready(function(){
+                let everyone = retrieveLocalStorage("everyoneArray");
+                let alertMessage = "";
+                let personObj;
+                let name;
+                let pass;
+
+                $("admin-enter").click(function (){
+                    name = retrieveVal("admin-name");
+                    pass = retrieveVal("admin-pass");
+                    if(checkUser(everyone, name, pass)){
+                        //code to go to admin page
+                    }
+                });
+
+                function checkUser(arr, name, pass){
+                    if(arr){
+                        for(let i=0; i<arr.length; i++){
+                            if(name.toLowerCase() === arr[i].firstName.toLowerCase() && pass === arr[i].number){
+                                return true;
+                            }
+                        }
+                        alertMessage = "Either your username or password is incorrect. Please check for spelling or go to regular sign in."
+                        return false;
+                    }
+                }
+            
+                function retrieveVal(id){//get the values from input bars
+                    return document.getElementById(id).value;
+                }
+
+                //functions to handle local storage
+                function retrieveLocalStorage(key){//get array from the local storage
+                    return JSON.parse(localStorage.getItem(key));
+                }
+
+                function updateLocalStorage(key, val){
+                    //if key is defined - remove that item from local storage (so not saving multiple copies)
+                    if(key){
+                        localStorage.removeItem(key);
+                    }
+                    localStorage.setItem(key, JSON.stringify(val));
+                }
+    
+            });
+        </script>
     </head>
     <body>
         <nav>
@@ -58,7 +105,8 @@
             </ul>
         </nav>
         <div class = "abilities">
-            <h3>Please sign in with your name and password in the provided space</h2>
+            <h3>Please sign in with your name and password in the provided space</h3>
+            <h3>To sign out, just click on one of the links in the top right corner</h3>
             <h3>What can you do as an administrator?</h3>
             <ul>
                 <li>Clock In/ Clock Out</li>
@@ -70,11 +118,11 @@
         <div class = "adminSignIn">
             <p>
                 <label>Name</label>
-                <input type = "text" id = "adminName"/>
+                <input type = "text" id = "admin-name"/>
             </p>
             <p>
                 <label>Password</label>
-                <input type="password" id="adminPass" />
+                <input type="password" id="admin-pass" />
             </p>
             <p>
                 <button type="button" id="admin-enter">Enter</button>

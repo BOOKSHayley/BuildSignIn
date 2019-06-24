@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <title>Team 2992's Build Sign In</title>
+            <meta charset="utf-8"/>
+            <style>
+                body{
+                    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+                    background-color: #516EFF;/*000080*/
+                    color: #fff;
+                }
+                /* navigation menu */
+                nav {
+                    background-color:#516EFF;
+                    margin: 0 auto;
+                    margin-bottom: 20px;
+                    display: flex;
+                    padding: 10px;
+                    border-radius: 25px;
+                }
+                nav header {
+                    font-size: 2.3em;
+                    display: flex;
+                    align-items: center;
+                    color: #fff;
+                    flex: 1;
+                }
+                nav ul {
+                    align-items: center;
+                    list-style-image: none;
+                }
+                nav li {
+                    display:inline-block;
+                    padding: 0 10px;
+                }
+                nav a {
+                    text-decoration:none;
+                    color: #fff;
+                }
+    
+                #officer-abilities a{
+                    color:#fff;
+                }
+
+                .text-box{
+                    display: block;
+			        position: absolute;
+                    background-color: #a0b0ff;
+                    color:#fff;
+                    font-size: 20px;
+                    width:500px;
+                    height:300px;
+                }
+
+                .buttons{
+                    display: block;
+			        position: absolute;
+                    background-color:#A0E4FF;
+                    color: #064964;
+                    border-radius: 25px;
+                    width: 70px;
+                    height: 35px;
+                }
+                
+                #enter-btn{
+                    background-color:#A0E4FF;
+                    color: #064964;
+                    border-radius: 25px;
+                }
+
+            </style>
+    
+            <script src="jquery-3.4.1.js"></script>
+            <script>
+                $(document).ready(function(){
+                    let everyone = retrieveLocalStorage("everyoneArray");
+                    let firstName;
+                    let lastName;
+                    let personObj;
+                    let lastDate;
+                    let lastClockIn;
+                    let lastClockOut;
+                    let lastTotal;
+                    let allHours;
+                    let lastIndex; //keep track of index so can use fwd and backward btns
+
+                    let textBox = $('.text-box');
+                    let windowWidth = $('.board').width();
+                    let windowHeight = $(document).height();
+                    let prevBtn = $('#prev-btn');
+                    let nextBtn = $('#next-btn');
+
+                    //middle of the screen for text box
+                    let horizMidScreen = (windowWidth/2)-(textBox.width()/2);
+                    let vertMidScreen = (windowHeight/2)-(textBox.height()/2); 
+                    
+                    //dynamically sets the box to middle of screen
+                    textBox.css('left', horizMidScreen);
+                    textBox.css('top', vertMidScreen);
+
+                    //dynamically sets the buttons next to the text box
+                    prevBtn.css('left', horizMidScreen - 115);
+                    prevBtn.css('top', vertMidScreen + textBox.height());
+
+                    nextBtn.css('left', horizMidScreen + textBox.width() + 50);
+                    nextBtn.css('top', vertMidScreen + textBox.height());
+                    
+                    //end of positioning elements
+
+                    $("#enter-btn").click(function (){//what to do when enter is clicked
+                        textBox.text("");
+
+                        //assigning calculated variables
+                        firstName = retrieveVal("student-name");
+                        lastName = retrieveVal("last-name")
+                        personObj = findPerson(everyone, firstName, lastName);
+
+                        if(personObj){
+                            allHours = personObj.allHours;
+                            lastIndex = personObj.dates.length-1; //length of dates and all other arrays should be same
+                            updateValues(personObj, lastIndex);
+                            setText();
+                        }
+                    });
+
+                    $("#next-btn").click(function(){
+                        if(lastIndex >= personObj.dates.length-1){
+                            alert("Sorry, this is the most available information. You cannot go forward anymore.")
+                        } else{
+                            lastIndex++;
+                        }
+                        updateValues(personObj, lastIndex);
+                        setText();
+                    });
+
+                    $("#prev-btn").click(function(){
+                        if(lastIndex <= 0){
+                            alert("Sorry, this is the first information we have.  You cannot go back anymore.")
+                        } else{
+                            lastIndex--;
+                        }
+                        updateValues(personObj, lastIndex);
+                        setText();
+                    });
+
+
+                    //functions to set the text
+                    function updateValues(object, index){
+                        console.log(object);
+                        lastDate = object.dates[index];
+                        console.log(lastDate);
+                        lastClockIn = object.clockIns[index];
+                        lastClockOut = object.clockOuts[index];//if haven't clocked out yet probably be undefined
+                        lastTotal = object.totals[index];//may be undefined
+                    }
+
+                    function setText(){
+                        textBox.text("Last known information on "+firstName+":"+
+                        "\n Date: " + lastDate + 
+                        //"\n Clocked In: "+lastClockIn + 
+                        //"\n Clocked Out: "+lastClockOut + 
+                        "\n Total for that day: "+lastTotal + 
+                        "\n Total overall: "+allHours);
+                    }
+
+                    //functions to find/check for inputted student
+                    function findPerson(arr, name, lN){//finds student's object
+                        if(arr){
+                            if(lN){//if last name is provided, also check for last names
+                                for(let i=0; i<arr.length; i++){
+                                    if(isEqualTo(name, arr[i].firstName) && isEqualTo(lN, arr[i].lastName)){
+                                        return arr[i];
+                                    }
+                                }
+                            } else if(!lN && checkForDoubles(arr, name)){//no last name included and more than one person w/ same name
+                                alert("There are more than one person with the name "+ name+" so please enter last name. Thank you");
+                                return null;
+                            }else{//no last name given and no doubles therefore can just look for the person
+                                for(let i=0; i<arr.length; i++){
+                                    if(isEqualTo(name, arr[i].firstName)){
+                                        return arr[i];
+                                    }
+                                }
+                            }
+                            alertMessage = "We couldn't find "+name+". Please check for spelling errors, thank you";
+                        }else{
+                            console.log("error: array not defined");
+                        }                    
+                        return null;
+                    }
+
+                    function checkForDoubles(arr, name){
+                        let counter = 0;
+                        for(let i=0; i<arr.length; i++){
+                            if(isEqualTo(name, arr[i].firstName)){
+                                counter++;
+                            }
+                        }
+                        if(counter > 1){ //if more than one person w/ same name - return true
+                            return true;
+                        } else{//if not thats fine
+                            return false;
+                        }
+                    }
+                    
+                    function isEqualTo(val1, val2){
+                        if(val1.toLowerCase() === val2.toLowerCase()){
+                            return true;
+                        } else{
+                            return false;
+                        }
+                    }
+
+                    // function convertTime(time){//clock in/out is in hours since Jan 1970
+                    //     time /= 24; //turn time into days
+                    //     time -= Math.trunc(time);//take the decimal portion of time
+                    // }
+
+                    function retrieveVal(id){//get the values from input bars
+                        return document.getElementById(id).value;
+                    }
+
+                    //functions to handle local storage
+                    function retrieveLocalStorage(key){//get array from the local storage
+                        return JSON.parse(localStorage.getItem(key));
+                    }
+
+                });
+            </script>
+    </head>
+    <body class="board">
+        <nav>
+            <header>Admin View Hours</header>
+            <ul>
+                <li> <a href = admin.html>Admin Sign In</a></li>
+                <li> <a href = signIn.html>Regular Sign In</a></li>
+                <li> <a href = newUser.html>New User?</a></li>
+            </ul>
+        </nav>
+        <div>
+            <p>
+                <label>Enter student's name</label>
+                <input type="text" id="student-name"/>
+                <label>Optional student last name</label>
+                <input type="text" id="last-name"/>
+                <button id = "enter-btn">Enter</button>
+            </p>
+        </div>
+        <div class="text-box"></div>
+        <div>
+            <button class="buttons" id="prev-btn">Previous</button>
+            <button class="buttons" id="next-btn">Next</button>
+        </div>
+    </body>
+
+</html>
