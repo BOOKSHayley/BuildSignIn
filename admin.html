@@ -38,15 +38,19 @@
                 color: #fff;
             }
         
-            #admin-enter{
+            .btns{
                 background-color:#A0E4FF;
                 color: #064964;
                 border-radius: 25px;
             }
+
+            .to-hide{
+                visibility: hidden;
+            }
         </style>
 
         <script src="jquery-3.4.1.js"></script>
-        <!-- <script lang="javascript" src="dist/xlsx.full.min.js"></script> -->
+        <script src="functions.js"></script>
         <script>
             $(document).ready(function(){
                 let everyone = retrieveLocalStorage("everyoneArray");
@@ -54,44 +58,41 @@
                 let personObj;
                 let name;
                 let pass;
+                let mI;//mid init for if forgot pass
 
-                $("admin-enter").click(function (){
+                $("#admin-enter").click(function (){
                     name = retrieveVal("admin-name");
                     pass = retrieveVal("admin-pass");
                     if(checkUser(everyone, name, pass)){
                         //code to go to admin page
+                        window.location.assign("adminPage.html");
+                        updateLocalStorage("currentAdmin", name);
                     }
                 });
 
-                function checkUser(arr, name, pass){
-                    if(arr){
-                        for(let i=0; i<arr.length; i++){
-                            if(name.toLowerCase() === arr[i].firstName.toLowerCase() && pass === arr[i].number){
-                                return true;
-                            }
+                $("#forgot-pass-btn").click(function(){
+                    $(".to-hide").css('visibility', 'visible');
+                });
+
+                $("#recover-pass-btn").click(function(){
+                    name = retrieveVal("forgot-pass-name");
+                    mI = retrieveVal("forgot-pass-mid-init");
+
+                    let foundPass = false;
+                    for(var i=0; i<everyone.length; i++){
+                        if(isEqualTo(name, everyone[i].firstName) && isEqualTo(mI, everyone[i].midInit)){
+                            foundPass = true;
+                            alert("Your password is "+everyone[i].number);
+                            break;
                         }
-                        alertMessage = "Either your username or password is incorrect. Please check for spelling or go to regular sign in."
-                        return false;
                     }
-                }
-            
-                function retrieveVal(id){//get the values from input bars
-                    return document.getElementById(id).value;
-                }
 
-                //functions to handle local storage
-                function retrieveLocalStorage(key){//get array from the local storage
-                    return JSON.parse(localStorage.getItem(key));
-                }
-
-                function updateLocalStorage(key, val){
-                    //if key is defined - remove that item from local storage (so not saving multiple copies)
-                    if(key){
-                        localStorage.removeItem(key);
+                    if(!foundPass){
+                        alert("Could not find password. Make sure you're an admin or check for spelling errors");
                     }
-                    localStorage.setItem(key, JSON.stringify(val));
-                }
-    
+                    
+                });
+
             });
         </script>
     </head>
@@ -125,8 +126,20 @@
                 <input type="password" id="admin-pass" />
             </p>
             <p>
-                <button type="button" id="admin-enter">Enter</button>
+                <button type="button" class="btns" id="admin-enter">Enter</button>
             </p>
+        </div>
+        <div id="forgot-password">
+            <button type="button" class="btns" id="forgot-pass-btn">Forgot Password?</button>
+            <h4 class="to-hide">To recover your password please enter the following:</h4>
+
+            <label class="to-hide">Name</label>
+            <input type="text" class="to-hide" id="forgot-pass-name"/>
+
+            <label class="to-hide">Middle Initial</label>
+            <input type="text" class="to-hide" id="forgot-pass-mid-init"/>
+
+            <button type="button" class = "btns" class="to-hide" id="recover-pass-btn">Enter</button>
         </div>
     </body>
 </html>

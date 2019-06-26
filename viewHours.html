@@ -37,11 +37,6 @@
                     text-decoration:none;
                     color: #fff;
                 }
-    
-                #officer-abilities a{
-                    color:#fff;
-                }
-
                 .text-box{
                     display: block;
 			        position: absolute;
@@ -61,6 +56,13 @@
                     width: 70px;
                     height: 35px;
                 }
+
+                #nT-div{
+                    display: block;
+			        position: absolute;
+                    padding-top:370px;
+                    padding-left:450px;
+                }
                 
                 #enter-btn{
                     background-color:#A0E4FF;
@@ -71,9 +73,12 @@
             </style>
     
             <script src="jquery-3.4.1.js"></script>
+            <script src="functions.js"></script>
             <script>
                 $(document).ready(function(){
                     let everyone = retrieveLocalStorage("everyoneArray");
+                    let curAdmin = retrieveLocalStorage("currentAdmin");
+
                     let firstName;
                     let lastName;
                     let personObj;
@@ -83,6 +88,7 @@
                     let lastTotal;
                     let allHours;
                     let lastIndex; //keep track of index so can use fwd and backward btns
+                    let newTotal;
 
                     let textBox = $('.text-box');
                     let windowWidth = $('.board').width();
@@ -97,13 +103,12 @@
                     //dynamically sets the box to middle of screen
                     textBox.css('left', horizMidScreen);
                     textBox.css('top', vertMidScreen);
-
                     //dynamically sets the buttons next to the text box
                     prevBtn.css('left', horizMidScreen - 115);
                     prevBtn.css('top', vertMidScreen + textBox.height());
-
                     nextBtn.css('left', horizMidScreen + textBox.width() + 50);
                     nextBtn.css('top', vertMidScreen + textBox.height());
+                    
                     
                     //end of positioning elements
 
@@ -112,7 +117,8 @@
 
                         //assigning calculated variables
                         firstName = retrieveVal("student-name");
-                        lastName = retrieveVal("last-name")
+                        lastName = retrieveVal("last-name");
+
                         personObj = findPerson(everyone, firstName, lastName);
 
                         if(personObj){
@@ -142,10 +148,19 @@
                         updateValues(personObj, lastIndex);
                         setText();
                     });
+ 
+                    $("#new-total-btn").click(function(){
+                        if(curAdmin === firstName){//make sure not trying to change own hours
+                            alert("Sorry, you cannot change your own hours. Ask another admin to do this, thank you.");
+                        } else{
+                            newTotal = retrieveVal("new-total");
+                            personObj.totals[lastIndex] = newTotal;
+                            alert("You have chenged the total for "+lastDate+" to "+ newTotal);
+                        }
+                        
+                    });
 
-
-                    //functions to set the text
-                    function updateValues(object, index){
+                    function updateValues(object, index){//updates the values to view different date's values
                         console.log(object);
                         lastDate = object.dates[index];
                         console.log(lastDate);
@@ -154,7 +169,7 @@
                         lastTotal = object.totals[index];//may be undefined
                     }
 
-                    function setText(){
+                    function setText(){//sets the text in the box for users to see
                         textBox.text("Last known information on "+firstName+":"+
                         "\n Date: " + lastDate + 
                         //"\n Clocked In: "+lastClockIn + 
@@ -162,69 +177,6 @@
                         "\n Total for that day: "+lastTotal + 
                         "\n Total overall: "+allHours);
                     }
-
-                    //functions to find/check for inputted student
-                    function findPerson(arr, name, lN){//finds student's object
-                        if(arr){
-                            if(lN){//if last name is provided, also check for last names
-                                for(let i=0; i<arr.length; i++){
-                                    if(isEqualTo(name, arr[i].firstName) && isEqualTo(lN, arr[i].lastName)){
-                                        return arr[i];
-                                    }
-                                }
-                            } else if(!lN && checkForDoubles(arr, name)){//no last name included and more than one person w/ same name
-                                alert("There are more than one person with the name "+ name+" so please enter last name. Thank you");
-                                return null;
-                            }else{//no last name given and no doubles therefore can just look for the person
-                                for(let i=0; i<arr.length; i++){
-                                    if(isEqualTo(name, arr[i].firstName)){
-                                        return arr[i];
-                                    }
-                                }
-                            }
-                            alertMessage = "We couldn't find "+name+". Please check for spelling errors, thank you";
-                        }else{
-                            console.log("error: array not defined");
-                        }                    
-                        return null;
-                    }
-
-                    function checkForDoubles(arr, name){
-                        let counter = 0;
-                        for(let i=0; i<arr.length; i++){
-                            if(isEqualTo(name, arr[i].firstName)){
-                                counter++;
-                            }
-                        }
-                        if(counter > 1){ //if more than one person w/ same name - return true
-                            return true;
-                        } else{//if not thats fine
-                            return false;
-                        }
-                    }
-                    
-                    function isEqualTo(val1, val2){
-                        if(val1.toLowerCase() === val2.toLowerCase()){
-                            return true;
-                        } else{
-                            return false;
-                        }
-                    }
-
-                    // function convertTime(time){//clock in/out is in hours since Jan 1970
-                    //     time /= 24; //turn time into days
-                    //     time -= Math.trunc(time);//take the decimal portion of time
-                    // }
-
-                    function retrieveVal(id){//get the values from input bars
-                        return document.getElementById(id).value;
-                    }
-
-                    //functions to handle local storage
-                    function retrieveLocalStorage(key){//get array from the local storage
-                        return JSON.parse(localStorage.getItem(key));
-                    }
-
                 });
             </script>
     </head>
@@ -239,9 +191,9 @@
         </nav>
         <div>
             <p>
-                <label>Enter student's name</label>
+                <label>Enter Student's Name</label>
                 <input type="text" id="student-name"/>
-                <label>Optional student last name</label>
+                <label>Optional Student Last Name</label>
                 <input type="text" id="last-name"/>
                 <button id = "enter-btn">Enter</button>
             </p>
@@ -250,6 +202,14 @@
         <div>
             <button class="buttons" id="prev-btn">Previous</button>
             <button class="buttons" id="next-btn">Next</button>
+        </div>
+        <div id="nT-div">
+            <h3 class = "nT" id= "nT-h3">Do you need to change one day's totals?</h3>
+            <p>
+                <label class = "nT" id = "nT-label">Enter total for the current date in the box</label>
+                <input type="text" class = "nT" id="new-total"/>
+                <button class = "nT" id="new-total-btn">Enter</button>
+            </p>
         </div>
     </body>
 

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <title>Team 2992's Build Sign In</title>
+            <meta charset="utf-8"/>
+            <style>
+                body{
+                    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+                    background-color: #516EFF;/*000080*/
+                    color: #fff;
+                }
+                /* navigation menu */
+                nav {
+                    background-color:#516EFF;
+                    margin: 0 auto;
+                    margin-bottom: 20px;
+                    display: flex;
+                    padding: 10px;
+                    border-radius: 25px;
+                }
+                nav header {
+                    font-size: 2.3em;
+                    display: flex;
+                    align-items: center;
+                    color: #fff;
+                    flex: 1;
+                }
+                nav ul {
+                    align-items: center;
+                    list-style-image: none;
+                }
+                nav li {
+                    display:inline-block;
+                    padding: 0 10px;
+                }
+                nav a {
+                    text-decoration:none;
+                    color: #fff;
+                }
+
+                th, td {
+                    border: 1px solid black;
+                }
+                
+                #download-table-btn{
+                    background-color:#A0E4FF;
+                    color: #064964;
+                    border-radius: 25px;
+                }
+
+                #clear-hours{
+                    background-color:#A0E4FF;
+                    color: #064964;
+                    border-radius: 25px;
+                }
+
+            </style>
+    
+            <script src="jquery-3.4.1.js"></script>
+            <script src="functions.js"></script>
+            <script>
+                $(document).ready(function(){
+                    let everyone = retrieveLocalStorage("everyoneArray");
+                    let numPeople = everyone.length;
+                    let listToPrint = [];
+
+                    for(let i=0; i<numPeople; i++){
+                        
+                        //code to handle creating the table
+                        let num = i + 1;//+1 so don't override row 0 (table headers)
+                        createNewRow(num, everyone[i].firstName, everyone[i].allHours);
+
+                        //code to handle creating array to download
+                        let obj = {
+                            name: everyone[i].firstName,
+                            total: everyone[i].allHours
+                        };
+                        listToPrint.push(obj);
+                    }
+
+                    $('#download-anchor').click(function (){
+                        download(listToPrint);
+                        alert("You have successfully downloaded the file. Go to the computer's downloads to find the document and email it to yourself. Thanks!");
+                    });
+
+                    $("#clear-hours").click(function(){
+
+                    });
+
+                    function createNewRow(num, col1, col2){
+                        let table = document.getElementById("hours-table");
+                        let row = table.insertRow(num);
+                        let cell1 = row.insertCell(0);
+                        let cell2 = row.insertCell(1);
+                        cell1.innerHTML = col1;
+                        cell2.innerHTML = col2;
+                    }
+
+                    function download(arr){
+                        let tableName = prompt("Please enter a table name (no spaces)") + ".txt";
+                        let newArray = [];
+                        for(let i=0; i<arr.length; i++){
+                            newArray.push(JSON.stringify(arr[i]));
+                        }
+                        let lineConcat = newArray.join("\r\n");
+                        //Blob objects take arrays but only very specific types of arrays
+                        let file = new Blob([lineConcat], {type: 'text/plain'});//{type: "application/txt"}
+                        let url = URL.createObjectURL(file);
+
+                        //code that connects to anchor element and actually downloads the text
+                        let a = document.getElementById("download-anchor");
+                        a.download = tableName;
+                        a.href = url;
+                    }
+
+                });
+            </script>
+    </head>
+    <body class="board">
+        <nav>
+            <header>Admin View Hours</header>
+            <ul>
+                <li> <a href = admin.html>Admin Sign In</a></li>
+                <li> <a href = signIn.html>Regular Sign In</a></li>
+                <li> <a href = newUser.html>New User?</a></li>
+            </ul>
+        </nav>
+
+        <!-- <button type="button" id="download-table-btn">Download Table</button> -->
+        <a id="download-anchor">Clickto Download Table</a>
+
+        <table style="width:100%" id="hours-table">
+            <tr>
+                <th>Name</th>
+                <th>Total</th>
+            </tr>
+        </table>
+
+        <h3>Clearing hours is unreversible. Please make sure that you really want to do that before clicking the button!</h3>
+        <h4>You would want clear hours if entering a new season for tracking hours</h4>
+        <button type="button" id="clear-hours">Click to clear everyone's hours</button>
+
+    </body>
+
+</html>

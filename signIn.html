@@ -48,6 +48,7 @@
 
         <!-- <script lang="javascript" src="dist/xlsx.full.min.js"></script> -->
         <script src="jquery-3.4.1.js"></script>
+        <script src="functions.js"></script>
         <script>
             $(document).ready(function(){
                 let everyone = retrieveLocalStorage("everyoneArray");
@@ -61,13 +62,10 @@
 
                 $("#in-btn").click(function(){
                     onBtnClick("in");
-                    
-                    
                 });
 
                 $("#out-btn").click(function(){
-                    onBtnClick("out");
-                    
+                    onBtnClick("out");      
                 });
 
                 //what to do when buttons are clicked
@@ -110,71 +108,6 @@
                     alert(alertMessage);
                 }
 
-                //functions to find/check for the student's information
-                function findPerson(arr, name, lN){//finds student's object
-                    if(arr){
-                        if(lN){//if last name is provided, also check for last names
-                            for(let i=0; i<arr.length; i++){
-                                if(isEqualTo(name, arr[i].firstName) && isEqualTo(lN, arr[i].lastName)){
-                                    return arr[i];
-                                }
-                            }
-                        } else if(!lN && checkForDoubles(arr, name)){//no last name included and more than one person w/ same name
-                            alert("There are more than one person with the name "+ name+" so please enter your last name. Thank you");
-                            return null;
-                        }else{//no last name given and no doubles therefore can just look for the person
-                            for(let i=0; i<arr.length; i++){
-                                if(isEqualTo(name, arr[i].firstName)){
-                                    return arr[i];
-                                }
-                            }
-                        }
-                        alertMessage = "We couldn't find your name. Please check for spelling errors or create a new user, thank you";
-                    }else{
-                        console.log("error: array not defined");
-                    }                    
-                    return null;
-                }
-
-                function checkForDoubles(arr, name){
-                    let counter = 0;
-                    for(let i=0; i<arr.length; i++){
-                        if(isEqualTo(name, arr[i].firstName)){
-                            counter++;
-                        }
-                    }
-                    if(counter > 1){ //if more than one person w/ same name - return true
-                        return true;
-                    } else{//if not thats fine
-                        return false;
-                    }
-                }
-
-                function isEqualTo(val1, val2){
-                    if(val1.toLowerCase() === val2.toLowerCase()){
-                        return true;
-                    } else{
-                        return false;
-                    }
-                }
-
-                function retrieveVal(id){//get the values from input bars
-                    return document.getElementById(id).value;
-                }
-
-                //functions to handle local storage
-                function retrieveLocalStorage(key){//get array from the local storage
-                    return JSON.parse(localStorage.getItem(key));
-                }
-
-                function updateLocalStorage(key, val){
-                    //if local storage has the key - remove that item from local storage (so not saving multiple copies)
-                    if(localStorage.getItem(key)){
-                        localStorage.removeItem(key);
-                    }
-                    localStorage.setItem(key, JSON.stringify(val));
-                }
-
             });
         </script>
 
@@ -190,11 +123,11 @@
         </nav>
         <main>
             <div class = "instructions">
-                <h2>To sign in, please enter your first name and date into the spaces provided and press the Clock In button</h2>
-                <h2>To sign out, please enter your first name into the space provided and press the Clock Out button</h2>
-                <h4>You only have to put the date when clocking IN</h4>
+                <h2>To sign in, please enter your first name and date into the spaces provided and press the Clock In button.</h2>
+                <h2>To sign out, please enter your first name into the space provided and press the Clock Out button.</h2>
+                <h4>You only have to put the date when clocking IN.</h4>
                 <h4>Note: If you do not clock out within 15 hours, you will be automatically clocked out 
-                    ONE hour from your previous clock in
+                    ONE hour from your previous clock in.
                 </h4>
             </div>
             <div class = "regularSignIn">

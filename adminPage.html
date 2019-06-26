@@ -41,12 +41,53 @@
             #officer-abilities a{
                 color:#fff;
             }
+
+            #new-officer{
+                padding-top:30px;
+                color:#fff;
+            }
         </style>
 
         <script src="jquery-3.4.1.js"></script>
-        <!-- <script lang="javascript" src="dist/xlsx.full.min.js"></script> -->
+        <script src="functions.js"></script>
         <script>
-            
+            $(document).ready(function(){
+                let everyone = retrieveLocalStorage("everyoneArray");
+                let possibleAdmins = ["mentor", "president","build captain", "programming lead", "secretary"];
+                let personObj;
+                let firstName;
+                let lastName;
+                let newPos;
+                let alertMessage = "";
+
+                $("#enter-btn").click(function(){
+                    firstName = retrieveVal("#student-name");
+                    lastName = retrieveVal("#last-name");
+                    newPos = retrieveVal("#position");
+
+                    personObj = findPerson(everyone, firstName, lastName);
+
+                    if(personObj){
+                        personObj.position = newPos.toLowerCase();
+                        if(checkPositions(possibleAdmins, newPos)){
+                            if(!personObj.admin){
+                                personObj.admin = true;
+                                alertMessage = "You have successfully made "+firstName+" into an administrator. Their password is "+admin.number;
+                            } else{
+                                alertMessage = firstName+" is already an administrator.";
+                            }
+                        } else{
+                            alertMessage = "Unfortunately, this position ("+pos+") cannot be made an admin. If it is in the list, check for spelling errors or tell the creator.";
+                        }
+
+                    }else{
+                        alertMessage = firstName+" is not a current user. Please create a new user then come back, thank you.";
+                    }
+
+                    alert(alertMessage);
+                                        
+                });
+            });
         </script>
     </head>
     <body>
@@ -61,11 +102,39 @@
         <div id="officer-abilities">
             <h2>What do you need to do?</h2>
             <ul>
-                <li> <a href= signIn.html>Clock In/Clock Out</a></li>
-                <li><a href=viewHours.html>View build hours</a></li>
-                <li>Fix someones build hours</li>
-                <li>Create a new Officer</li>
+                <li> <a href= "signIn.html">Clock In/Clock Out</a></li>
+                <li> <a href="viewHours.html">View or change build hours</a></li>
+                <li> <a href="viewAllHours.html">Download everyone's hours here</a></li>
+                <li>Clear all build hours (do this for new build season etc)</li>
+                <li>Create a new Administrator (below)</li>
             </ul>
+        </div>
+        <div id="new-officer">
+            <h3>Enter the following to make a new administrator.</h3>
+            <h4>Please note that administrators should be one of the following:</h4>
+            <ul>
+                <li>Mentor</li>
+                <li>President</li>
+                <li>Build Captain</li>
+                <li>Programming Lead</li>
+                <li>Secretary</li>
+            </ul>
+            <h5>Enter new position as seen in bullets above, or an error may occur in creating the administrator.</h5>
+            <h5>Make sure that the new admin is already a user in the system, or an error may occur.</h5>
+            <h6>*If you have an issue with who can be an admin please see the creator.</h6>
+
+            <p>
+                <label>New Admin's Name</label>
+                <input type="text" id="student-name"/>
+                <label>Optional Student Last Name</label>
+                <input type="text" id="last-name"/>
+            </p>
+
+            <p>
+                <label>New Admin's Team Position</label>
+                <input type="text" id="position"/>
+                <button id = "enter-btn">Enter</button>
+            </p>
         </div>
     </body>
 </html>
