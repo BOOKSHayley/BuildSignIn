@@ -43,8 +43,11 @@
                     background-color: #a0b0ff;
                     color:#fff;
                     font-size: 20px;
+                    line-height: 50px;
+                    left: 425px;
+                    top: 228.5px;
                     width:500px;
-                    height:300px;
+                    height:200px;
                 }
 
                 .buttons{
@@ -55,6 +58,13 @@
                     border-radius: 25px;
                     width: 70px;
                     height: 35px;
+                    z-index: 1;
+                }
+
+                .enter-btns{
+                    background-color:#A0E4FF;
+                    color: #064964;
+                    border-radius: 25px;
                 }
 
                 #nT-div{
@@ -63,11 +73,15 @@
                     padding-top:370px;
                     padding-left:450px;
                 }
-                
-                #enter-btn{
-                    background-color:#A0E4FF;
-                    color: #064964;
-                    border-radius: 25px;
+
+                #prev-btn{
+                    left: 310px;
+                    top: 428.5px;
+                }
+
+                #next-btn{
+                    left: 975px;
+                    top: 428.5px;
                 }
 
             </style>
@@ -91,24 +105,6 @@
                     let newTotal;
 
                     let textBox = $('.text-box');
-                    let windowWidth = $('.board').width();
-                    let windowHeight = $(document).height();
-                    let prevBtn = $('#prev-btn');
-                    let nextBtn = $('#next-btn');
-
-                    //middle of the screen for text box
-                    let horizMidScreen = (windowWidth/2)-(textBox.width()/2);
-                    let vertMidScreen = (windowHeight/2)-(textBox.height()/2); 
-                    
-                    //dynamically sets the box to middle of screen
-                    textBox.css('left', horizMidScreen);
-                    textBox.css('top', vertMidScreen);
-                    //dynamically sets the buttons next to the text box
-                    prevBtn.css('left', horizMidScreen - 115);
-                    prevBtn.css('top', vertMidScreen + textBox.height());
-                    nextBtn.css('left', horizMidScreen + textBox.width() + 50);
-                    nextBtn.css('top', vertMidScreen + textBox.height());
-                    
                     
                     //end of positioning elements
 
@@ -122,21 +118,11 @@
                         personObj = findPerson(everyone, firstName, lastName);
 
                         if(personObj){
-                            allHours = personObj.allHours;
+                            allHours = numFix(personObj.allHours, 2);
                             lastIndex = personObj.dates.length-1; //length of dates and all other arrays should be same
                             updateValues(personObj, lastIndex);
                             setText();
                         }
-                    });
-
-                    $("#next-btn").click(function(){
-                        if(lastIndex >= personObj.dates.length-1){
-                            alert("Sorry, this is the most available information. You cannot go forward anymore.")
-                        } else{
-                            lastIndex++;
-                        }
-                        updateValues(personObj, lastIndex);
-                        setText();
                     });
 
                     $("#prev-btn").click(function(){
@@ -148,35 +134,65 @@
                         updateValues(personObj, lastIndex);
                         setText();
                     });
+
+                    $("#next-btn").click(function(){
+                        if(lastIndex >= personObj.dates.length-1){
+                            alert("Sorry, this is the most available information. You cannot go forward anymore.")
+                        } else{
+                            lastIndex++;
+                        }
+                        updateValues(personObj, lastIndex);
+                        setText();
+                    });
  
                     $("#new-total-btn").click(function(){
+                        var alertMessage = "";
+                        newTotal = numFix(Number(retrieveVal("new-total")), 2);
+                        allHours = numFix(allHours, 2);
                         if(curAdmin === firstName){//make sure not trying to change own hours
-                            alert("Sorry, you cannot change your own hours. Ask another admin to do this, thank you.");
-                        } else{
-                            newTotal = retrieveVal("new-total");
-                            personObj.totals[lastIndex] = newTotal;
-                            alert("You have chenged the total for "+lastDate+" to "+ newTotal);
+                            alertMessage = "Sorry, you cannot change your own hours. Ask another admin to do this, thank you.";
+                        } else if(newTotal !== undefined){
+                            if(personObj.clockIns.length === personObj.clockOuts.length){//the person has clocked out
+                                //make sure to update allHours to subtract old total and add new one
+                                allHours = numFix((allHours + newTotal - lastTotal), 2);
+                                personObj.allHours = allHours;
+
+                                personObj.totals[lastIndex] = newTotal;
+                                alertMessage = "You have changed the total for "+lastDate+" to "+ newTotal;
+                            } else{
+                                alertMessage = "You cannot change the total for "+lastDate+" because this person has not clocked out.";
+                            }
+                            
+                        }else{
+                            alertMessage = "Please enter a value into the textbox, thanks.";
                         }
-                        
+
+                        //make sure the changes are saved, and user is notified
+                        updateLocalStorage("everyoneArray", everyone);
+                        alert(alertMessage);
+
+                        //code to update the textarea
+                        updateValues(personObj, lastIndex);
+                        setText();
                     });
 
                     function updateValues(object, index){//updates the values to view different date's values
-                        console.log(object);
                         lastDate = object.dates[index];
-                        console.log(lastDate);
-                        lastClockIn = object.clockIns[index];
-                        lastClockOut = object.clockOuts[index];//if haven't clocked out yet probably be undefined
-                        lastTotal = object.totals[index];//may be undefined
+                        //lastClockIn = object.clockIns[index];
+                        //lastClockOut = object.clockOuts[index];//if haven't clocked out yet probably be undefined
+                        lastTotal = object.totals[index]
+                        allHours = numFix(object.allHours, 2);
                     }
 
                     function setText(){//sets the text in the box for users to see
-                        textBox.text("Last known information on "+firstName+":"+
-                        "\n Date: " + lastDate + 
-                        //"\n Clocked In: "+lastClockIn + 
-                        //"\n Clocked Out: "+lastClockOut + 
-                        "\n Total for that day: "+lastTotal + 
-                        "\n Total overall: "+allHours);
+                        //lastTotal = numFix(lastTotal, 2);
+                        allHours = numFix(allHours, 2);
+                        textBox.text("Last known information on "+firstName+":" +
+                        "\n Date: " + lastDate +
+                        "\n Total for that day: "+lastTotal + " hours" +
+                        "\n Total overall: "+allHours + " hours");
                     }
+         
                 });
             </script>
     </head>
@@ -184,6 +200,7 @@
         <nav>
             <header>Admin View Hours</header>
             <ul>
+                <li> <a href = adminPage.html>Admin Main Page</a></li>
                 <li> <a href = admin.html>Admin Sign In</a></li>
                 <li> <a href = signIn.html>Regular Sign In</a></li>
                 <li> <a href = newUser.html>New User?</a></li>
@@ -195,20 +212,20 @@
                 <input type="text" id="student-name"/>
                 <label>Optional Student Last Name</label>
                 <input type="text" id="last-name"/>
-                <button id = "enter-btn">Enter</button>
+                <button class="enter-btns" id = "enter-btn">Enter</button>
             </p>
         </div>
-        <div class="text-box"></div>
-        <div>
-            <button class="buttons" id="prev-btn">Previous</button>
-            <button class="buttons" id="next-btn">Next</button>
-        </div>
+        <textarea rows="1" cols="4" readonly class="text-box" id="txt"></textarea>
+
+        <button type="button" class="buttons" id="prev-btn">Previous</button>
+        <button type="button" class="buttons" id="next-btn">Next</button>
+
         <div id="nT-div">
             <h3 class = "nT" id= "nT-h3">Do you need to change one day's totals?</h3>
             <p>
                 <label class = "nT" id = "nT-label">Enter total for the current date in the box</label>
                 <input type="text" class = "nT" id="new-total"/>
-                <button class = "nT" id="new-total-btn">Enter</button>
+                <button class="enter-btns" id="new-total-btn">Enter</button>
             </p>
         </div>
     </body>

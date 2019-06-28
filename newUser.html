@@ -43,6 +43,14 @@
                 color: #064964;
                 border-radius: 25px;
             }
+
+            #boat{
+                display: block;
+			    position: absolute;
+                height: 250px;
+                z-index: -1;
+
+            }
     
         </style>
         
@@ -50,42 +58,69 @@
         <script src="functions.js"></script>
         <script>
             $(document).ready(function(){
+                //localStorage.clear();
                 let firstName;
                 let lastName;
                 let midInit;
                 let number = 0;
                 let everyone = [];
 
-                $("#submit-btn").click(function (){
-                    if(localStorage.getItem("number")){
-                        number = retrieveLocalStorage("number");
-                    }
+                //handling the boat
+                let position = 0;
+                let vertPos = 390;
+                let speed = -10;
+                let vertSpeed = -1;
+                let direction = 1;
+                setInterval(moveBoat, 100);
 
+                $("#submit-btn").click(function (){
+                    //recover the everyone array from local storage
+                    //can't do it at top bc may not exist yet
                     if(localStorage.getItem("everyoneArray")){
                         everyone = retrieveLocalStorage("everyoneArray");
                     }
 
+                    number = everyone.length;//number is always the index of next val in array
+
+                    //get the values from the text boxes
                     firstName = document.getElementById("new-user-first-name").value;
                     lastName = document.getElementById("new-user-last-name").value;
                     midInit = document.getElementById("new-user-mid-init").value;
 
-                    makeNewUser(number, firstName, midInit, lastName);
-                    number++;
-                    //console.log(number);
+                    //clear the fields for next person
+                    clearInputField("new-user-first-name");
+                    clearInputField("new-user-mid-init");
+                    clearInputField("new-user-last-name");
 
-                    //this saves the array in local storage
-                    //array should still be there after refresh
-                    updateLocalStorage("everyoneArray", everyone);
-                    updateLocalStorage("number", number);
+                    let user;
+                    let nullIndex = findNullValIndex(everyone);
 
-                    alert("Congratulations! You have successfully created an account. Welcome to Team 2992!")
+                    //check to see where/if a user should be made
+                    if(checkForDoubleUsers(everyone, firstName, midInit, lastName)){
+                        //this is if user trying to make more than one file 
+                        alert("A user named " + firstName+" "+midInit+". "+lastName+" has already been created. Go to the sign in or see the creator.");
+                    }else if(nullIndex >= 0){ 
+                        //this means there is an open spot before the end
+                        user = makeNewUser(nullIndex, firstName, midInit, lastName);
+                    }else{
+                        user = makeNewUser(number, firstName, midInit, lastName);
+                    }
+                    
+                    if(user){
+                        //this saves the array and number of people in local storage
+                        //array should still be there after refresh
+                        updateLocalStorage("everyoneArray", everyone);
+
+                        alert("Congratulations! You have successfully created an account. Welcome to Team 2992!")
+                    }                    
                 });
 
                 function makeNewUser(num, fN, mI, lN){
+                    //make a new object with dynamic naming
                     window["obj"+num] = {
                         number: num,
-                        admin:true,
-                        position:"programming lead",
+                        admin:false,
+                        position:"student",
                         firstName: fN,
                         midInit: mI,
                         lastName: lN,
@@ -95,10 +130,26 @@
                         totals: [],
                         allHours: 0
                     }
-                    everyone.push(window["obj"+num]);
-                    //console.log(everyone);
+                    everyone[num] = window["obj"+num];//not .push bc may be putting object in middle of array (blank spot)
+                    return window["obj"+num];//saved in user variable
                 }
         
+                function moveBoat(){
+                    let image = $('#boat');
+                    position += speed;
+                    vertPos += vertSpeed * direction;
+
+                    if(position < -image.width()){
+                        position = $('body').width();
+                    }
+
+                    if(vertPos < 370 || vertPos > 400){
+                        direction *= -1;
+                    }
+
+                    image.css('left', position);
+                    image.css('top', vertPos);
+                }
             });
         </script>
 
@@ -129,5 +180,6 @@
             </p>
                 <button type="submit" id="submit-btn">Create Account</button>
         </div>
+        <img src="team2992Boat.png" id="boat"/>
     </body>
 </html>

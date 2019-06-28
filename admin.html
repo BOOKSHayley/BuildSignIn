@@ -47,6 +47,14 @@
             .to-hide{
                 visibility: hidden;
             }
+
+            #boat{
+                display: block;
+			    position: absolute;
+                height: 250px;
+                z-index: -1;
+
+            }
         </style>
 
         <script src="jquery-3.4.1.js"></script>
@@ -60,7 +68,16 @@
                 let pass;
                 let mI;//mid init for if forgot pass
 
+                //handling the boat
+                let position = 0;
+                let vertPos = 390;
+                let speed = -10;
+                let vertSpeed = -1;
+                let direction = 1;
+                setInterval(moveBoat, 100);
+
                 $("#admin-enter").click(function (){
+                    console.log("clicked admin enter");
                     name = retrieveVal("admin-name");
                     pass = retrieveVal("admin-pass");
                     if(checkUser(everyone, name, pass)){
@@ -77,13 +94,20 @@
                 $("#recover-pass-btn").click(function(){
                     name = retrieveVal("forgot-pass-name");
                     mI = retrieveVal("forgot-pass-mid-init");
+                    
+                    clearInputField("forgot-pass-name");
+                    clearInputField("forgot-pass-mid-init");
 
                     let foundPass = false;
                     for(var i=0; i<everyone.length; i++){
                         if(isEqualTo(name, everyone[i].firstName) && isEqualTo(mI, everyone[i].midInit)){
                             foundPass = true;
-                            alert("Your password is "+everyone[i].number);
-                            break;
+                            if(everyone[i].admin){
+                                alert("Your password is "+everyone[i].number);
+                                break;
+                            } else{
+                                alert("Nice try, but you're not an administrator. Go to the regular sign in.")
+                            }
                         }
                     }
 
@@ -92,6 +116,23 @@
                     }
                     
                 });
+
+                function moveBoat(){
+                    let image = $('#boat');
+                    position += speed;
+                    vertPos += vertSpeed * direction;
+
+                    if(position < -image.width()){
+                        position = $('body').width();
+                    }
+
+                    if(vertPos < 370 || vertPos > 400){
+                        direction *= -1;
+                    }
+
+                    image.css('left', position);
+                    image.css('top', vertPos);
+                }
 
             });
         </script>
@@ -139,7 +180,8 @@
             <label class="to-hide">Middle Initial</label>
             <input type="text" class="to-hide" id="forgot-pass-mid-init"/>
 
-            <button type="button" class = "btns" class="to-hide" id="recover-pass-btn">Enter</button>
+            <button type="button" class="to-hide btns" id="recover-pass-btn">Enter</button>
         </div>
+        <img src="team2992Boat.png" id="boat"/>
     </body>
 </html>

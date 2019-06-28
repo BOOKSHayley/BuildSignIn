@@ -42,8 +42,18 @@
                 background-color:#A0E4FF;
                 color: #064964;
                 border-radius: 25px;
+                margin-right: 20px;
+                width: 80px;
+                height: 35px;
             }
     
+            #boat{
+                display: block;
+			    position: absolute;
+                height: 250px;
+                z-index: -1;
+
+            }
         </style>
 
         <!-- <script lang="javascript" src="dist/xlsx.full.min.js"></script> -->
@@ -57,7 +67,6 @@
                 let date = "";
                 let time = 0;
                 let total = 0;
-                let allHours = 0;
                 let personObj;
 
                 $("#in-btn").click(function(){
@@ -67,6 +76,14 @@
                 $("#out-btn").click(function(){
                     onBtnClick("out");      
                 });
+
+                //handling the boat
+                let position = 0;
+                let vertPos = 390;
+                let speed = -10;
+                let vertSpeed = -1;
+                let direction = 1;
+                setInterval(moveBoat, 100);
 
                 //what to do when buttons are clicked
                 function onBtnClick(val){
@@ -79,33 +96,67 @@
                     personObj = findPerson(everyone, name, lastName);
 
                     //may not find the person therefore null
-                    if(personObj){      
+                    if(personObj){    
                         if(val === "in"){
                             personObj.dates.push(date);
                             //if you forgot to clock in previously
                             if(personObj.clockIns.length !== personObj.clockOuts.length){
-                                total = 1;
-                                personObj.totals.push(total);
-                                alertMessage += " We are missing the previous clock out. You have been awarded one hour of build time from the previous clock-in. ";
-                            }
+                                // total = 1;
+                                // personObj.totals.push(total);
+                                // alertMessage += " We are missing the previous clock out. You have been awarded one hour of build time from the previous clock-in. ";
+                                alertMessage = "You did not clock out last time, please clock out first."
+                            } else{
                             personObj.clockIns.push(time);
                             alertMessage += " Hello, " + name + " "+lastName+", you have successfully clocked in today!";
+                            }
                         }else if(val === "out"){
-                            total = (time - personObj.clockIns[personObj.clockIns.length-1]).toFixed(2);
-
+                            let lastClockIn = numFix(personObj.clockIns[personObj.clockIns.length-1], 2);
+                            total = numFix(time - lastClockIn, 2);
+                            
                             //if you tried to clock out after a long time
                             if(total >= 15.00){
-                                total = 1;
+                                total = 1.00;
                                 alertMessage += " You're prior clock in was more than 15 hours ago. You have been awarded one hour of build time from that clock-in. Please clock in to log more hours. ";
                             }
-                            personObj.clockOuts.push(time);
-                            personObj.totals.push(total);
-                            personObj.allHours += total;
-                            alertMessage += " Hello, "+name+", you have successfully logged "+total+" hours today for a total of "+allHours+" hours!";
+
+                            //these ifs need to be linked so not adding a clock out if need to clock in
+                            if(personObj.clockOuts.length !== personObj.clockIns.length-1){ // if already clocked out
+                                alertMessage += " You have already clocked out. Please clock in first";
+                            } else{ // haven't clocked out yet. 
+                                let allHours = numFix(personObj.allHours, 2);
+                                personObj.clockOuts.push(time);
+                                personObj.totals.push(total);
+                                personObj.allHours = numFix((allHours + total), 2);
+                                alertMessage += " Hello, "+name+", you have successfully logged "+total+" hours today for a total of "+personObj.allHours+" hours!";
+                            }
                         } 
+                        alert(alertMessage);
+                    } else{
+                        alert("You have not created a user yet. Please go to the New User link at the top right.");
                     }
+
+                    clearInputField("regular-name");
+                    clearInputField("opt-last-name");
+                    
                     updateLocalStorage("everyoneArray", everyone);
-                    alert(alertMessage);
+                    
+                }
+
+                function moveBoat(){
+                    let image = $('#boat');
+                    position += speed;
+                    vertPos += vertSpeed * direction;
+
+                    if(position < -image.width()){
+                        position = $('body').width();
+                    }
+
+                    if(vertPos < 370 || vertPos > 400){
+                        direction *= -1;
+                    }
+
+                    image.css('left', position);
+                    image.css('top', vertPos);
                 }
 
             });
@@ -146,6 +197,7 @@
                     <button type="button" class="btns" id="out-btn">Clock Out</button>
                 </p>
             </div>
+            <img src="team2992Boat.png" id="boat"/>
         </main>
     </body>
 </html>

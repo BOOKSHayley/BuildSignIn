@@ -56,6 +56,48 @@ var retrieveVal = function(id){//get the values from input bars
     return document.getElementById(id).value;
 }
 
+var each = function(arr, func){
+    for(var i=0; i<arr.length; i++){
+        func(arr[i], i, arr);
+    }
+}
+
+var findNullValIndex = function(arr){
+    let i = -1;
+    each(arr, function(val, index){
+        if(val === null || val === undefined){
+            i = index;
+            return index;
+        }
+    });
+    return i;
+}
+
+function clearInputField(inputField){
+    document.getElementById(inputField).value = "";
+}
+
+function numFix(val, toFix){
+    return Number(val.toFixed(toFix));
+}
+
+/////////////////////////////////////////////
+//function specific to newUser.html
+
+var checkForDoubleUsers = function(arr, fN, mI, lN){
+    let toReturn = false;
+    each(arr, function(obj, index){
+        if(obj){
+            let p = obj;
+            //if there's a user w/ exact same name assume that it's an accidental copy
+            if(isEqualTo(p.firstName, fN) && isEqualTo(p.lastName, lN) && isEqualTo(p.midInit, mI)){
+                toReturn = true;
+                return true;
+            }
+        }
+    });
+    return toReturn;
+}
 /////////////////////////////////////////////
 //function specific to admin.html
 
@@ -63,7 +105,6 @@ var checkUser = function(arr, name, pass){
     if(arr){
         for(let i=0; i<arr.length; i++){
             if(isEqualTo(name, arr[i].firstName) && Number(pass) === arr[i].number){
-
                 if(arr[i].admin){
                     return true;
                 }else{

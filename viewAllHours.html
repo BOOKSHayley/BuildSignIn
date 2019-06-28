@@ -54,6 +54,13 @@
                     border-radius: 25px;
                 }
 
+                #double-check-clear-btn{
+                    visibility: hidden;
+                    background-color:#A0E4FF;
+                    color: #064964;
+                    border-radius: 25px;
+                }
+
             </style>
     
             <script src="jquery-3.4.1.js"></script>
@@ -64,27 +71,38 @@
                     let numPeople = everyone.length;
                     let listToPrint = [];
 
-                    for(let i=0; i<numPeople; i++){
-                        
-                        //code to handle creating the table
-                        let num = i + 1;//+1 so don't override row 0 (table headers)
-                        createNewRow(num, everyone[i].firstName, everyone[i].allHours);
-
-                        //code to handle creating array to download
-                        let obj = {
-                            name: everyone[i].firstName,
-                            total: everyone[i].allHours
-                        };
-                        listToPrint.push(obj);
-                    }
-
+                    each(everyone, function(val, i){
+                            //code to handle creating the table
+                            let num = i + 1;//+1 so don't override row 0 (table headers)
+                            createNewRow(num, val.firstName, val.allHours);
+                            //code to handle creating array to download
+                            let obj = {
+                                name: val.firstName,
+                                total: val.allHours
+                            };
+                            listToPrint.push(obj);
+                    });
+                     
                     $('#download-anchor').click(function (){
                         download(listToPrint);
                         alert("You have successfully downloaded the file. Go to the computer's downloads to find the document and email it to yourself. Thanks!");
                     });
 
                     $("#clear-hours").click(function(){
+                        $("#double-check-clear-btn").css('visibility', 'visible');
+                    });
 
+                    $("#double-check-clear-btn").click(function(){
+                        each(everyone, function(obj){
+                            obj.dates = [];
+                            obj.clockIns = [];
+                            obj.clockOuts = [];
+                            obj.totals = [];
+                            obj.allHours = 0;
+                        });
+                        alert("You've successfully cleared everyone's hours. This may not show up on the table until you refresh.");
+                        $("#double-check-clear-btn").css('visibility', 'hidden');
+                        updateLocalStorage("everyoneArray", everyone);
                     });
 
                     function createNewRow(num, col1, col2){
@@ -118,8 +136,9 @@
     </head>
     <body class="board">
         <nav>
-            <header>Admin View Hours</header>
+            <header>Table of Everyone's Hours</header>
             <ul>
+                <li> <a href = adminPage.html>Admin Main Page</a></li>
                 <li> <a href = admin.html>Admin Sign In</a></li>
                 <li> <a href = signIn.html>Regular Sign In</a></li>
                 <li> <a href = newUser.html>New User?</a></li>
@@ -127,8 +146,8 @@
         </nav>
 
         <!-- <button type="button" id="download-table-btn">Download Table</button> -->
-        <a id="download-anchor">Clickto Download Table</a>
-
+        <a id="download-anchor">Click to Download Table</a>
+        <h3>If you need to clear out everyone's hours (i.e. for a new season), scroll below the table.</h3>
         <table style="width:100%" id="hours-table">
             <tr>
                 <th>Name</th>
@@ -136,9 +155,10 @@
             </tr>
         </table>
 
-        <h3>Clearing hours is unreversible. Please make sure that you really want to do that before clicking the button!</h3>
+        <h3>Clearing hours is irreversible. Please make sure that you really want to do that before clicking the button!</h3>
         <h4>You would want clear hours if entering a new season for tracking hours</h4>
         <button type="button" id="clear-hours">Click to clear everyone's hours</button>
+        <button type="button" id="double-check-clear-btn">You are 100% sure you want to clear ALL hours?</button>
 
     </body>
 

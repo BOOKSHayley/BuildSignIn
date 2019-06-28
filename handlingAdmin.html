@@ -54,21 +54,8 @@
                 border-radius: 25px;
             }
 
-            .what-can-do{
-                line-height:30px;
-                font-size: 18px;
-            }
-
             #officer-abilities a{
                 color:#fff;
-            }
-
-            #boat{
-                display: block;
-			    position: absolute;
-                height: 250px;
-                z-index: -1;
-
             }
 
         </style>
@@ -85,14 +72,6 @@
                 let lastName;
                 let newPos;
                 let alertMessage = "";
-
-                //handling the boat
-                let position = 0;
-                let vertPos = 390;
-                let speed = -10;
-                let vertSpeed = -1;
-                let direction = 1;
-                setInterval(moveBoat, 100);
 
                 $("#enter-btn").click(function(){
                     firstName = retrieveVal("student-name");
@@ -111,7 +90,7 @@
                                 alertMessage = firstName+" is already an administrator.";
                             }
                         } else{
-                            alertMessage = "Unfortunately, this position ("+pos+") cannot be made an admin. If it is in the list, check for spelling errors or tell the creator.";
+                            alertMessage = "Unfortunately, this position ("+newPos+") cannot be made an admin. If it is in the list, check for spelling errors or tell the creator.";
                         }
 
                     }else{
@@ -128,7 +107,7 @@
                     lastName = retrieveVal("old-user-last-name");
 
                     if(firstName === curAdmin){
-                        alert("You cannot delete yourself. Please ask another administrator.");
+                        alert("You cannot delete yourself. Please ask another administrator to do so.");
                     }else{
                         each(everyone, function(obj, index){
                             //if found the user
@@ -149,36 +128,25 @@
                     lastName = retrieveVal("old-admin-last-name");
 
                     if(firstName === curAdmin){
-                        alert("You cannot demote yourself. Please ask another administrator.");
+                        alert("You cannot demote yourself. Please ask another administrator to do so.");
                     }else{
                         each(everyone, function(obj, index){
                             //if found the user
                             if(isEqualTo(firstName, obj.firstName) && isEqualTo(lastName, obj.lastName)){
-                                obj.admin = false;
-                                obj.position = "student";
+                                if(obj.admin){
+                                    obj.admin = false;
+                                    obj.position = "student";
+                                    alert("You have successfully demoted "+firstName+" "+lastName+".");
+                                }else{
+                                    alert(firstName + " " + lastName + " was not previously an administrator.");
+                                }
+                                return;
                             }
                         });
 
                         updateLocalStorage("everyoneArray", everyone);
                     }
                 });
-
-                function moveBoat(){
-                    let image = $('#boat');
-                    position += speed;
-                    vertPos += vertSpeed * direction;
-
-                    if(position < -image.width()){
-                        position = $('body').width();
-                    }
-
-                    if(vertPos < 370 || vertPos > 400){
-                        direction *= -1;
-                    }
-
-                    image.css('left', position);
-                    image.css('top', vertPos);
-                }
 
             });
         </script>
@@ -187,21 +155,74 @@
         <nav>
             <header>Admin Page</header>
             <ul>
+                <li> <a href = adminPage.html>Admin Main Page</a></li>
                 <li> <a href="admin.html">Admin Sign In</a></li>
                 <li> <a href="signin.html">Regular Sign In</a></li>
                 <li> <a href = "newUser.html">New User?</a></li>
             </ul>
         </nav>
-        <div id="officer-abilities">
-            <h2>What do you need to do?</h2>
-            <ul class="what-can-do">
-                <li> <a href= "signIn.html">Clock In/Clock Out</a></li>
-                <li> <a href="viewHours.html">View or change build hours</a></li>
-                <li> <a href="viewAllHours.html">Download everyone's hours</a></li>
-                <li> <a href="viewAllHours.html">Clear all build hours</a></li>
-                <li> <a href="handlingAdmin.html">Handle current users and administrators</a></li>
+
+        <h2>
+            This page gives you the ability to update a new administrator, 
+            demote an old administrator, and completely delete an old user.
+        </h2>
+
+        <hr>
+
+        <div id="new-officer">
+            <h3>Enter the following to make a new administrator:</h3>
+            <h4>Please note that administrators should be one of the following:</h4>
+            <ul>
+                <li>Mentor</li>
+                <li>President</li>
+                <li>Build Captain</li>
+                <li>Programming Lead</li>
+                <li>Secretary</li>
             </ul>
+            <h5>Enter new position as seen in bullets above, or an error may occur in creating the administrator.</h5>
+            <h5>Make sure that the new admin is already a user in the system, or an error may occur.</h5>
+            <h6>*If you have an issue with who can be an admin please see the creator.</h6>
+
+            <p>
+                <label>New Admin's Name</label>
+                <input type="text" id="student-name"/>
+                <label>Optional Student Last Name</label>
+                <input type="text" id="last-name"/>
+            </p>
+
+            <p>
+                <label>New Admin's Team Position</label>
+                <input type="text" id="position"/>
+                <button type="button" class="btns" id = "enter-btn">Enter</button>
+            </p>
         </div>
-        <img src="team2992Boat.png" id="boat"/>
+
+        <hr>
+
+        <div id="demote-admin">
+            <h3>Enter the following to remove admin priveleges from someone:</h3>
+            <h4>Please only do this if the person is no longer an accepted officer.</h4>
+            <p>
+                <label>Name</label>
+                <input type="text" id="old-admin-name"/>
+                <label>Last Name</label>
+                <input type="text" id="old-admin-last-name"/>
+                <button type="button" class="btns" id="demote-admin-btn">Enter</button>
+            </p>
+        </div>
+
+        <hr>
+
+        <div id="delete-user">
+            <h3>Enter the following to delete an old user:</h3>
+            <h4>This action is irreversible, so please make sure the user has left the team (graduated, etc).</h4>
+            <p>
+                <label>Name</label>
+                <input type="text" id="old-user-name"/>
+                <label>Last Name</label>
+                <input type="text" id="old-user-last-name"/>
+                <button type="button" class="btns" id="delete-old-user-btn">Enter</button>
+            </p>
+        </div>
     </body>
 </html>
