@@ -8,7 +8,7 @@
 var checkForDoubles = function(arr, name){//checks to see if more than one person w/ same firstname
     let counter = 0;
     for(let i=0; i<arr.length; i++){
-        if(isEqualTo(name, arr[i].firstName)){
+        if(arr[i] && isEqualTo(name, arr[i].firstName)){//make sure arr[i] is defined
             counter++;
         }
     }
@@ -23,7 +23,7 @@ var findPerson = function(arr, name, lN){//finds student's object
     if(arr){
         if(lN){//if last name is provided, also check for last names
             for(let i=0; i<arr.length; i++){
-                if(isEqualTo(name, arr[i].firstName) && isEqualTo(lN, arr[i].lastName)){
+                if(arr[i] && isEqualTo(name, arr[i].firstName) && isEqualTo(lN, arr[i].lastName)){//make sure arr[i] is defined
                     return arr[i];
                 }
             }
@@ -32,7 +32,7 @@ var findPerson = function(arr, name, lN){//finds student's object
             return null;
         }else{//no last name given and no doubles therefore can just look for the person
             for(let i=0; i<arr.length; i++){
-                if(isEqualTo(name, arr[i].firstName)){
+                if(arr[i] && isEqualTo(name, arr[i].firstName)){//make sure arr[i] is defined
                     return arr[i];
                 }
             }

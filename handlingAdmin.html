@@ -72,6 +72,7 @@
                 let lastName;
                 let newPos;
                 let alertMessage = "";
+                let foundPerson;
 
                 $("#enter-btn").click(function(){
                     firstName = retrieveVal("student-name");
@@ -108,18 +109,26 @@
 
                     if(firstName === curAdmin){
                         alert("You cannot delete yourself. Please ask another administrator to do so.");
-                    }else{
+                    }else {
+                        foundPerson = false; //use this to see if person is actually a user
                         each(everyone, function(obj, index){
                             //if found the user
-                            if(isEqualTo(firstName, obj.firstName) && isEqualTo(lastName, obj.lastName)){
+                            //the 1st statement in the if checks to see if the current val in everyone is defined (may be null)
+                            if(obj && isEqualTo(firstName, obj.firstName) && isEqualTo(lastName, obj.lastName)){
                                 //make the slot undefined therefor all people's numbers stay same and newer numbers don't get messed up
+                                foundPerson = true;
                                 everyone[index] = undefined;
                                 alert("You have successfully deleted "+firstName+" "+lastName+" from the spreadsheet.");
                             }
                         });
 
-                        updateLocalStorage("everyoneArray", everyone);
-                    }
+                        if(foundPerson){
+                            updateLocalStorage("everyoneArray", everyone);
+                        } else{
+                            alert(firstName+" is not a current user. Please check for spelling errors.");
+                        }
+                        
+                    } 
 
                 });
 
@@ -130,9 +139,11 @@
                     if(firstName === curAdmin){
                         alert("You cannot demote yourself. Please ask another administrator to do so.");
                     }else{
+                        foundPerson = false;
                         each(everyone, function(obj, index){
                             //if found the user
-                            if(isEqualTo(firstName, obj.firstName) && isEqualTo(lastName, obj.lastName)){
+                            if(obj && isEqualTo(firstName, obj.firstName) && isEqualTo(lastName, obj.lastName)){//make sure obj is defined
+                                foundPerson = true;
                                 if(obj.admin){
                                     obj.admin = false;
                                     obj.position = "student";
@@ -144,7 +155,12 @@
                             }
                         });
 
-                        updateLocalStorage("everyoneArray", everyone);
+                        if(foundPerson){
+                            updateLocalStorage("everyoneArray", everyone);    
+                        }else{
+                            alert(firstName+" is not a current user. Please check for spelling errors.");
+                        }
+                        
                     }
                 });
 

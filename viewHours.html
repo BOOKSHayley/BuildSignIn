@@ -149,10 +149,10 @@
                         var alertMessage = "";
                         newTotal = numFix(Number(retrieveVal("new-total")), 2);
                         allHours = numFix(allHours, 2);
-                        if(curAdmin === firstName){//make sure not trying to change own hours
+                        if(isEqualTo(curAdmin, firstName)){//make sure not trying to change own hours
                             alertMessage = "Sorry, you cannot change your own hours. Ask another admin to do this, thank you.";
                         } else if(newTotal !== undefined){
-                            if(personObj.clockIns.length === personObj.clockOuts.length){//the person has clocked out
+                            if(lastTotal){//the person has clocked out  personObj.clockIns.length === personObj.clockOuts.length
                                 //make sure to update allHours to subtract old total and add new one
                                 allHours = numFix((allHours + newTotal - lastTotal), 2);
                                 personObj.allHours = allHours;
