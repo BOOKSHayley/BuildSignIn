@@ -69,6 +69,14 @@
                 let total = 0;
                 let personObj;
 
+                //handling the boat
+                let position = 0;
+                let vertPos = 380;
+                let speed = -10;
+                let vertSpeed = -1;
+                let direction = 1;
+                setInterval(moveBoat, 100);
+
                 $("#in-btn").click(function(){
                     onBtnClick("in");
                 });
@@ -77,28 +85,19 @@
                     onBtnClick("out");      
                 });
 
-                //handling the boat
-                let position = 0;
-                let vertPos = 390;
-                let speed = -10;
-                let vertSpeed = -1;
-                let direction = 1;
-                setInterval(moveBoat, 100);
-
                 //what to do when buttons are clicked
                 function onBtnClick(val){
                     alertMessage = "";
                     name = retrieveVal("regular-name");
                     lastName = retrieveVal("opt-last-name");
-                    date = retrieveVal("date");
+                    date = getDate();
                     time = Date.now()/1000/60/60; //time is milliseconds so need to convert to hours
 
                     personObj = findPerson(everyone, name, lastName);
 
-                    //may not find the person therefore null
+                    //may not find the person (0) or find doubles (null)
                     if(personObj){    
                         if(val === "in"){
-                            personObj.dates.push(date);
                             //if you forgot to clock in previously
                             if(personObj.clockIns.length !== personObj.clockOuts.length){
                                 // total = 1;
@@ -106,8 +105,9 @@
                                 // alertMessage += " We are missing the previous clock out. You have been awarded one hour of build time from the previous clock-in. ";
                                 alertMessage = "You did not clock out last time, please clock out first."
                             } else{
-                            personObj.clockIns.push(time);
-                            alertMessage += " Hello, " + name + " "+lastName+", you have successfully clocked in today!";
+                                personObj.dates.push(date);
+                                personObj.clockIns.push(time);
+                                alertMessage += " Hello, " + name + " "+lastName+", you have successfully clocked in today!";
                             }
                         }else if(val === "out"){
                             let lastClockIn = numFix(personObj.clockIns[personObj.clockIns.length-1], 2);
@@ -131,7 +131,7 @@
                             }
                         } 
                         alert(alertMessage);
-                    } else{
+                    } else if(personObj === 0){//0 (not null) if user not created (as opposed to double users)
                         alert("You have not created a user yet. Please go to the New User link at the top right.");
                     }
 
@@ -140,6 +140,14 @@
                     
                     updateLocalStorage("everyoneArray", everyone);
                     
+                }
+
+                function getDate(){
+                    let dateObj = new Date();
+                    let m = dateObj.getMonth() + 1;//bc getMonth returns number 0-11 (starts at 0)
+                    let d = dateObj.getDate();//starts counting at 1
+                    let y = dateObj.getFullYear();//returns year as 4 digit number
+                    return m+"/"+d+"/"+y;
                 }
 
                 function moveBoat(){
@@ -151,7 +159,7 @@
                         position = $('body').width();
                     }
 
-                    if(vertPos < 370 || vertPos > 400){
+                    if(vertPos < 350 || vertPos > 380){
                         direction *= -1;
                     }
 
@@ -188,10 +196,10 @@
                     <label>Last Name (Optional)</label>
                     <input type = "text" id = "opt-last-name"/>
                 </p>
-                <p>
+                <!-- <p>
                     <label>Date</label>
                     <input type="text" id="date" />
-                </p>
+                </p> -->
                 <p>
                     <button type="button" class="btns" id="in-btn">Clock In</button>
                     <button type="button" class="btns" id="out-btn">Clock Out</button>

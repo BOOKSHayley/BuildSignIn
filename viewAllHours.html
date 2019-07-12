@@ -68,8 +68,8 @@
             <script>
                 $(document).ready(function(){
                     let everyone = retrieveLocalStorage("everyoneArray");
-                    let numPeople = everyone.length;
                     let listToPrint = [];
+                    let numPeople = everyone.length;
                     let numberOfRows = 1;//start at 1 bc header is row 1
 
                     each(everyone, function(val, i){
@@ -79,7 +79,7 @@
                             if(num > numberOfRows){
                                 num--;
                             }
-                            createNewRow(num, val.firstName, val.allHours);
+                            createNewRow(num, val.firstName + " "+ val.lastName, val.allHours);
                             //code to handle creating array to download
                             let obj = {
                                 name: val.firstName,

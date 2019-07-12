@@ -122,6 +122,8 @@
                             lastIndex = personObj.dates.length-1; //length of dates and all other arrays should be same
                             updateValues(personObj, lastIndex);
                             setText();
+                        } else if(personObj === 0){
+                            alert("We couldn't find "+ firstName + " "+ lastName+ "please check for spelling errors or that they are a user.");
                         }
                     });
 
@@ -166,6 +168,8 @@
                         }else{
                             alertMessage = "Please enter a value into the textbox, thanks.";
                         }
+                        //clear the input field
+                        clearInputField("new-total");
 
                         //make sure the changes are saved, and user is notified
                         updateLocalStorage("everyoneArray", everyone);
@@ -187,7 +191,7 @@
                     function setText(){//sets the text in the box for users to see
                         //lastTotal = numFix(lastTotal, 2);
                         allHours = numFix(allHours, 2);
-                        textBox.text("Last known information on "+firstName+":" +
+                        textBox.text("Last known information on "+firstName+":" + lastName +
                         "\n Date: " + lastDate +
                         "\n Total for that day: "+lastTotal + " hours" +
                         "\n Total overall: "+allHours + " hours");

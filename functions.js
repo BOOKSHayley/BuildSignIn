@@ -37,11 +37,10 @@ var findPerson = function(arr, name, lN){//finds student's object
                 }
             }
         }
-        alertMessage = "We couldn't find your name. Please check for spelling errors or create a new user, thank you";
-    }else{
-        console.log("error: array not defined");
-    }                    
-    return null;
+        //alertMessage = "We couldn't find your name. Please check for spelling errors or create a new user, thank you";
+        return 0;//return 0 to differentiate between no user and double users
+    }               
+    
 }
 
 var isEqualTo = function(val1, val2){ // this can be used to compare lowercased strings
