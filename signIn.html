@@ -112,17 +112,18 @@
                         }else if(val === "out"){
                             let lastClockIn = numFix(personObj.clockIns[personObj.clockIns.length-1], 2);
                             total = numFix(time - lastClockIn, 2);
-                            
-                            //if you tried to clock out after a long time
-                            if(total >= 15.00){
-                                total = 1.00;
-                                alertMessage += " You're prior clock in was more than 15 hours ago. You have been awarded one hour of build time from that clock-in. Please clock in to log more hours. ";
-                            }
 
                             //these ifs need to be linked so not adding a clock out if need to clock in
-                            if(personObj.clockOuts.length !== personObj.clockIns.length-1){ // if already clocked out
+                            if(lastClockIn || personObj.clockOuts.length !== personObj.clockIns.length-1){ // if already clocked out
                                 alertMessage += " You have already clocked out. Please clock in first";
                             } else{ // haven't clocked out yet. 
+
+                                //if you tried to clock out after a long time
+                                if(total >= 15.00){
+                                    total = 1.00;
+                                    alertMessage += " You're prior clock in was more than 15 hours ago. You have been awarded one hour of build time from that clock-in. Please clock in to log more hours. ";
+                                }
+
                                 let allHours = numFix(personObj.allHours, 2);
                                 personObj.clockOuts.push(time);
                                 personObj.totals.push(total);
@@ -182,9 +183,8 @@
         </nav>
         <main>
             <div class = "instructions">
-                <h2>To sign in, please enter your first name and date into the spaces provided and press the Clock In button.</h2>
-                <h2>To sign out, please enter your first name into the space provided and press the Clock Out button.</h2>
-                <h4>You only have to put the date when clocking IN.</h4>
+                <h2>To sign in, please enter your name into the spaces provided and press the Clock In button.</h2>
+                <h2>To sign out, please enter your name into the spaces provided and press the Clock Out button.</h2>
                 <h4>Note: If you do not clock out within 15 hours, you will be automatically clocked out 
                     ONE hour from your previous clock in.
                 </h4>

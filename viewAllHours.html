@@ -75,14 +75,11 @@
                     each(everyone, function(val, i){
                         if(val){//val may be null
                             //code to handle creating the table
-                            let num = i + 1;//+1 so don't override row 0 (table headers)
-                            if(num > numberOfRows){
-                                num--;
-                            }
-                            createNewRow(num, val.firstName + " "+ val.lastName, val.allHours);
+                            
+                            createNewRow(numberOfRows, val.firstName + " "+ val.lastName, val.allHours);
                             //code to handle creating array to download
                             let obj = {
-                                name: val.firstName,
+                                name: val.firstName + " " + val.lastName,
                                 total: val.allHours
                             };
                             listToPrint.push(obj);
@@ -115,6 +112,7 @@
                     });
 
                     function createNewRow(num, col1, col2){
+                        console.log("3: "+num);
                         let table = document.getElementById("hours-table");
                         let row = table.insertRow(num);
                         let cell1 = row.insertCell(0);
@@ -166,7 +164,7 @@
         </table>
 
         <h3>Clearing hours is irreversible. Please make sure that you really want to do that before clicking the button!</h3>
-        <h4>You would want clear hours if entering a new season for tracking hours</h4>
+        <h4>You would want to clear hours if entering a new season for tracking hours</h4>
         <button type="button" id="clear-hours">Click to clear everyone's hours</button>
         <button type="button" id="double-check-clear-btn">You are 100% sure you want to clear ALL hours?</button>
 

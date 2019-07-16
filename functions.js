@@ -77,7 +77,12 @@ function clearInputField(inputField){
 }
 
 function numFix(val, toFix){
-    return Number(val.toFixed(toFix));
+    if(val){
+        return Number(val.toFixed(toFix));
+    }else{
+        return null;
+    }
+    
 }
 
 /////////////////////////////////////////////

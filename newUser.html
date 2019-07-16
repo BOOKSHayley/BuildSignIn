@@ -91,28 +91,33 @@
                     clearInputField("new-user-first-name");
                     clearInputField("new-user-mid-init");
                     clearInputField("new-user-last-name");
-
-                    let user;
-                    let nullIndex = findNullValIndex(everyone);
-
-                    //check to see where/if a user should be made
-                    if(checkForDoubleUsers(everyone, firstName, midInit, lastName)){
-                        //this is if user trying to make more than one file 
-                        alert("A user named " + firstName+" "+midInit+". "+lastName+" has already been created. Go to the sign in or see the creator.");
-                    }else if(nullIndex >= 0){ 
-                        //this means there is an open spot before the end
-                        user = makeNewUser(nullIndex, firstName, midInit, lastName);
-                    }else{
-                        user = makeNewUser(number, firstName, midInit, lastName);
-                    }
                     
-                    if(user){
-                        //this saves the array and number of people in local storage
-                        //array should still be there after refresh
-                        updateLocalStorage("everyoneArray", everyone);
+                    if(firstName && lastName && midInit){//make the fields required
+                        let user;
+                        let nullIndex = findNullValIndex(everyone);
 
-                        alert("Congratulations! You have successfully created an account. Welcome to Team 2992!")
-                    }                    
+                        //check to see where/if a user should be made
+                        if(checkForDoubleUsers(everyone, firstName, midInit, lastName)){
+                            //this is if user trying to make more than one file 
+                            alert("A user named " + firstName+" "+midInit+". "+lastName+" has already been created. Go to the sign in or see the creator.");
+                        }else if(nullIndex >= 0){ 
+                            //this means there is an open spot before the end
+                            user = makeNewUser(nullIndex, firstName, midInit, lastName);
+                        }else{
+                            user = makeNewUser(number, firstName, midInit, lastName);
+                        }
+                        
+                        if(user){
+                            //this saves the array and number of people in local storage
+                            //array should still be there after refresh
+                            updateLocalStorage("everyoneArray", everyone);
+
+                            alert("Congratulations! You have successfully created an account. Welcome to Team 2992!")
+                        }   
+                    } else{
+                        alert("You must input a value into ALL of the fields");
+                    }
+                 
                 });
 
                 function makeNewUser(num, fN, mI, lN){
@@ -165,7 +170,7 @@
         </nav>
         <div>
             <h2>With a new account, you will be able to sign in and out and record your hours for build</h2>
-            <h3>To create an account - please enter the following information</h3>
+            <h3>To create an account - please enter all of the following information</h3>
             <p>
                 <label>First Name</label>
                 <input type="text" id="new-user-first-name"/>
