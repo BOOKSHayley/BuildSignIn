@@ -114,7 +114,7 @@
                             total = numFix(time - lastClockIn, 2);
 
                             //these ifs need to be linked so not adding a clock out if need to clock in
-                            if(lastClockIn || personObj.clockOuts.length !== personObj.clockIns.length-1){ // if already clocked out
+                            if(lastClockIn && personObj.clockOuts.length !== personObj.clockIns.length-1){ // if already clocked out
                                 alertMessage += " You have already clocked out. Please clock in first";
                             } else{ // haven't clocked out yet. 
 
