@@ -64,6 +64,7 @@
                 let midInit;
                 let number = 0;
                 let everyone = [];
+                
 
                 //handling the boat
                 let position = 0;
@@ -73,12 +74,18 @@
                 let direction = 1;
                 setInterval(moveBoat, 100);
 
+
+                //if local storage not saved yet - make first person creator and push to local storage
+                if(!localStorage.getItem("everyoneArray")){
+                    everyone[0] = makeNewUser(0, "Hayley", "L", "Roberts", true, "creator");
+                    updateLocalStorage("everyoneArray", everyone);
+                }
+
+                
                 $("#submit-btn").click(function (){
-                    //recover the everyone array from local storage
-                    //can't do it at top bc may not exist yet
-                    if(localStorage.getItem("everyoneArray")){
-                        everyone = retrieveLocalStorage("everyoneArray");
-                    }
+    
+                    //local storage definitely has something in it bc creator made above
+                    everyone = retrieveLocalStorage("everyoneArray");//must be called in submit bc changes length
 
                     number = everyone.length;//number is always the index of next val in array
 
@@ -102,9 +109,9 @@
                             alert("A user named " + firstName+" "+midInit+". "+lastName+" has already been created. Go to the sign in or see the creator.");
                         }else if(nullIndex >= 0){ 
                             //this means there is an open spot before the end
-                            user = makeNewUser(nullIndex, firstName, midInit, lastName);
+                            user = makeNewUser(nullIndex, firstName, midInit, lastName, false, "student");
                         }else{
-                            user = makeNewUser(number, firstName, midInit, lastName);
+                            user = makeNewUser(number, firstName, midInit, lastName, false, "student");
                         }
                         
                         if(user){
@@ -120,12 +127,12 @@
                  
                 });
 
-                function makeNewUser(num, fN, mI, lN){
+                function makeNewUser(num, fN, mI, lN, isAdmin, position){
                     //make a new object with dynamic naming
                     window["obj"+num] = {
                         number: num,
-                        admin:false,
-                        position:"student",
+                        admin: isAdmin,
+                        position: position,
                         firstName: fN,
                         midInit: mI,
                         lastName: lN,
