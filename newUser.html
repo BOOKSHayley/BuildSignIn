@@ -140,7 +140,8 @@
                         clockIns: [],
                         clockOuts: [],
                         totals: [],
-                        allHours: 0
+                        allHours: 0,
+                        password: generatePass(fN, mI, lN, num)
                     }
                     everyone[num] = window["obj"+num];//not .push bc may be putting object in middle of array (blank spot)
                     return window["obj"+num];//saved in user variable

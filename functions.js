@@ -86,7 +86,7 @@ function numFix(val, toFix){
 }
 
 /////////////////////////////////////////////
-//function specific to newUser.html
+//functions specific to newUser.html
 
 var checkForDoubleUsers = function(arr, fN, mI, lN){
     let toReturn = false;
@@ -102,13 +102,18 @@ var checkForDoubleUsers = function(arr, fN, mI, lN){
     });
     return toReturn;
 }
+
+var generatePass = function(fN, mI, lN, num){
+    let pass = fN[0] + mI + lN[0] + num;
+    return pass;
+}
 /////////////////////////////////////////////
 //function specific to admin.html
 
 var checkUser = function(arr, name, pass){
     if(arr){
         for(let i=0; i<arr.length; i++){
-            if(isEqualTo(name, arr[i].firstName) && Number(pass) === arr[i].number){
+            if(isEqualTo(name, arr[i].firstName) && isEqualTo(pass, arr[i].password)){
                 if(arr[i].admin){
                     return true;
                 }else{
