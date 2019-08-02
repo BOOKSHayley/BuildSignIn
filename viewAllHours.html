@@ -75,14 +75,15 @@
                     each(everyone, function(val, i){
                         if(val){//val may be null
                             //code to handle creating the table
-                            
-                            createNewRow(numberOfRows, val.firstName + " "+ val.lastName, val.allHours);
-                            //code to handle creating array to download
-                            let obj = {
-                                name: val.firstName + " " + val.lastName,
-                                total: val.allHours
-                            };
-                            listToPrint.push(obj);
+                            if(!isMentor(val)){//this is so the mentors and creator is not put in table - bc no hours for them
+                                createNewRow(numberOfRows, val.firstName + " "+ val.lastName, val.allHours);
+                                //code to handle creating array to download
+                                let obj = {
+                                    name: val.firstName + " " + val.lastName,
+                                    total: val.allHours
+                                };
+                                listToPrint.push(obj);
+                            }
                         }
                     });
                      
@@ -112,7 +113,6 @@
                     });
 
                     function createNewRow(num, col1, col2){
-                        console.log("3: "+num);
                         let table = document.getElementById("hours-table");
                         let row = table.insertRow(num);
                         let cell1 = row.insertCell(0);
@@ -137,6 +137,13 @@
                         let a = document.getElementById("download-anchor");
                         a.download = tableName;
                         a.href = url;
+                    }
+
+                    function isMentor(person){
+                        if(isEqualTo(person.position, "mentor") || isEqualTo(person.position, "creator")){
+                            return true;
+                        }
+                        return false;
                     }
 
                 });

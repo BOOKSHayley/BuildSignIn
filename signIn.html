@@ -111,10 +111,13 @@
                             }
                         }else if(val === "out"){
                             let lastClockIn = numFix(personObj.clockIns[personObj.clockIns.length-1], 2);
+                            console.log(lastClockIn);
                             total = numFix(time - lastClockIn, 2);
+                            console.log(personObj.clockOuts.length !== personObj.clockIns.length-1);
 
                             //these ifs need to be linked so not adding a clock out if need to clock in
-                            if(lastClockIn && personObj.clockOuts.length !== personObj.clockIns.length-1){ // if already clocked out
+                            if(!lastClockIn || personObj.clockOuts.length !== personObj.clockIns.length-1){
+                                //if lastClockIn is null or clockIns and Outs are the sam length - then need to clock in
                                 alertMessage += " You have already clocked out. Please clock in first";
                             } else{ // haven't clocked out yet. 
 
