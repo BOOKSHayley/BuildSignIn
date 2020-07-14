@@ -113,7 +113,7 @@ var generatePass = function(fN, mI, lN, num){
 var checkUser = function(arr, name, pass){
     if(arr){
         for(let i=0; i<arr.length; i++){
-            if(isEqualTo(name, arr[i].firstName) && isEqualTo(pass, arr[i].password)){
+            if(arr[i] && isEqualTo(name, arr[i].firstName) && isEqualTo(pass, arr[i].password)){
                 if(arr[i].admin){
                     return true;
                 }else{
