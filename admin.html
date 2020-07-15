@@ -102,7 +102,7 @@
 
                     let foundPass = false;
                     for(var i=0; i<everyone.length; i++){
-                        if(isEqualTo(name, everyone[i].firstName) && isEqualTo(mI, everyone[i].midInit)){
+                        if(everyone[i] && isEqualTo(name, everyone[i].firstName) && isEqualTo(mI, everyone[i].midInit)){
                             foundPass = true;
                             if(everyone[i].admin){
                                 alert("Your password is "+everyone[i].password);
