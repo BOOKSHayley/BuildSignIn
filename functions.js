@@ -112,7 +112,7 @@ var generatePass = function(fN, mI, lN, num){
 
 var checkUser = function(arr, name, pass){
     if(arr){
-        let index = pass[pass.length-1]; //passwords are like HLR0 with the last val as the index 
+        let index = pass[pass.length-1]; //passwords are like III1 with the last val as the index 
         if(isEqualTo(name, arr[index].firstName) && isEqualTo(pass, arr[index].password)){
             if(arr[index].admin){
                 return true;
