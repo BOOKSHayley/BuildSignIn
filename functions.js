@@ -112,16 +112,15 @@ var generatePass = function(fN, mI, lN, num){
 
 var checkUser = function(arr, name, pass){
     if(arr){
-        for(let i=0; i<arr.length; i++){
-            if(arr[i] && isEqualTo(name, arr[i].firstName) && isEqualTo(pass, arr[i].password)){
-                if(arr[i].admin){
-                    return true;
-                }else{
-                    alert("Sorry, you are not an administrator. Go to regular sign in, thank you.");
-                    return false;
-                }
-                
+        let index = pass[pass.length-1]; //passwords are like HLR0 with the last val as the index 
+        if(isEqualTo(name, arr[index].firstName) && isEqualTo(pass, arr[index].password)){
+            if(arr[index].admin){
+                return true;
+            }else{
+                alert("Sorry, you are not an administrator. Go to regular sign in, thank you.");
+                return false;
             }
+            
         }
         alert("Either your username or password is incorrect. Please check for spelling or go to regular sign in.");
         return false;
